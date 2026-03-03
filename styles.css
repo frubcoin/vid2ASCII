@@ -589,13 +589,11 @@ main::before {
 .note-a {
   top: 12%;
   right: 1.5%;
-  animation: float-card 4.2s ease-in-out infinite;
 }
 
 .note-b {
   bottom: 7%;
   left: 0;
-  animation: float-card 4.8s ease-in-out infinite reverse;
 }
 
 .hero-orb {

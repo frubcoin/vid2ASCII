@@ -1,97 +1,90 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>KaiwASCII</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&family=Space+Mono:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css"
-      rel="stylesheet"
-      type="text/css"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="./styles.css" />
-  </head>
-  <body data-theme="night" class="min-h-screen bg-base-200 text-base-content">
-    <main class="landing-shell mx-auto flex w-full max-w-[1180px] flex-col gap-6 p-4 lg:p-8">
-      <nav class="navbar rounded-box border border-base-300 bg-base-100/85 px-4 shadow-xl backdrop-blur landing-nav">
-        <div class="flex-1">
-          <a
-            href="./index.html"
-            class="btn btn-ghost h-auto px-2 brand-lockup"
-            aria-label="KaiwASCII home"
-          >
-            <span class="brand-logo" aria-hidden="true"></span>
-          </a>
-        </div>
-        <div class="ml-2 flex items-center gap-2">
-          <label class="flex items-center gap-2">
-            <span class="text-sm opacity-70">Theme</span>
-            <select id="themeSelect" class="select select-sm select-bordered">
-              <option value="night">Night</option>
-              <option value="dracula">Dracula</option>
-              <option value="synthwave">Synthwave</option>
-              <option value="nord">Nord</option>
-              <option value="forest">Forest</option>
-              <option value="luxury">Luxury</option>
-              <option value="corporate">Corporate</option>
-              <option value="cupcake">Cupcake</option>
-              <option value="sunset">Sunset</option>
-              <option value="lofi">Lofi</option>
-            </select>
-          </label>
-          <a href="./editor.html" class="btn btn-primary btn-sm">Open Editor</a>
-        </div>
-      </nav>
 
-      <section class="landing-hero rounded-box border border-base-300 bg-base-100 shadow-xl">
-        <span class="hero-orb hero-orb-a" aria-hidden="true"></span>
-        <span class="hero-orb hero-orb-b" aria-hidden="true"></span>
-        <div class="landing-hero-grid">
-          <article class="landing-copy reveal-up">
-            <div class="hero-logo-shell" aria-hidden="true">
-              <div id="heroLogoInline" class="hero-logo-inline"></div>
-            </div>
-            <div class="badge badge-primary badge-outline">Local-first ASCII video conversion</div>
-            <h1 class="landing-title">Build cinematic ASCII loops from any video in minutes.</h1>
-            <p class="landing-subtitle">
-              Tune frame rate, detail, palette, and export options in a production-ready editor.
-              Everything runs in your browser with zero uploads.
-            </p>
-            <div class="landing-actions">
-              <a href="./editor.html" class="btn btn-primary">Open Editor</a>
-              <a href="#workflow" class="btn btn-outline">See Workflow</a>
-            </div>
-            <div class="landing-stats">
-              <div class="stat-chip reveal-up" style="--delay: 0.05s">
-                <strong>100%</strong>
-                <span>Browser Local</span>
-              </div>
-              <div class="stat-chip reveal-up" style="--delay: 0.1s">
-                <strong>3</strong>
-                <span>Quality Levels</span>
-              </div>
-              <div class="stat-chip reveal-up" style="--delay: 0.15s">
-                <strong>3</strong>
-                <span>Export Formats</span>
-              </div>
-            </div>
-          </article>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KaiwASCII</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
 
-          <aside class="landing-showcase reveal-up" style="--delay: 0.1s">
-            <div class="ascii-window">
-              <div class="ascii-header">
-                <span></span><span></span><span></span>
-                <p>kaiwASCII.live.preview</p>
-              </div>
-              <pre aria-hidden="true">@@@@@@@###***++===--..
+<body data-theme="night" class="min-h-screen bg-base-200 text-base-content">
+  <main class="landing-shell mx-auto flex w-full max-w-[1180px] flex-col gap-6 p-4 lg:p-8">
+    <nav class="navbar rounded-box border border-base-300 bg-base-100/85 px-4 shadow-xl backdrop-blur landing-nav">
+      <div class="flex-1">
+        <a href="./index.html" class="btn btn-ghost h-auto px-2 brand-lockup" aria-label="KaiwASCII home">
+          <span class="brand-logo" aria-hidden="true"></span>
+        </a>
+      </div>
+      <div class="ml-2 flex items-center gap-2">
+        <label class="flex items-center gap-2">
+          <span class="text-sm opacity-70">Theme</span>
+          <select id="themeSelect" class="select select-sm select-bordered">
+            <option value="night">Night</option>
+            <option value="dracula">Dracula</option>
+            <option value="synthwave">Synthwave</option>
+            <option value="nord">Nord</option>
+            <option value="forest">Forest</option>
+            <option value="luxury">Luxury</option>
+            <option value="corporate">Corporate</option>
+            <option value="cupcake">Cupcake</option>
+            <option value="sunset">Sunset</option>
+            <option value="lofi">Lofi</option>
+          </select>
+        </label>
+        <a href="./editor.html" class="btn btn-primary btn-sm">Open Editor</a>
+      </div>
+    </nav>
+
+    <section class="landing-hero rounded-box border border-base-300 bg-base-100 shadow-xl">
+      <span class="hero-orb hero-orb-a" aria-hidden="true"></span>
+      <span class="hero-orb hero-orb-b" aria-hidden="true"></span>
+      <div class="landing-hero-grid">
+        <article class="landing-copy reveal-up">
+          <div class="hero-logo-shell" aria-hidden="true">
+            <div id="heroLogoInline" class="hero-logo-inline"></div>
+          </div>
+          <div class="badge badge-primary badge-outline">Local-first ASCII video conversion</div>
+          <h1 class="landing-title">Build cinematic ASCII loops from any video in minutes.</h1>
+          <p class="landing-subtitle">
+            Tune frame rate, detail, palette, and export options in a production-ready editor.
+            Everything runs in your browser with zero uploads.
+          </p>
+          <div class="landing-actions">
+            <a href="./editor.html" class="btn btn-primary">Open Editor</a>
+            <a href="#workflow" class="btn btn-outline">See Workflow</a>
+          </div>
+          <div class="landing-stats">
+            <div class="stat-chip reveal-up" style="--delay: 0.05s">
+              <strong>100%</strong>
+              <span>Browser Local</span>
+            </div>
+            <div class="stat-chip reveal-up" style="--delay: 0.1s">
+              <strong>3</strong>
+              <span>Quality Levels</span>
+            </div>
+            <div class="stat-chip reveal-up" style="--delay: 0.15s">
+              <strong>3</strong>
+              <span>Export Formats</span>
+            </div>
+          </div>
+        </article>
+
+        <aside class="landing-showcase reveal-up" style="--delay: 0.1s">
+          <div class="ascii-window">
+            <div class="ascii-header">
+              <span></span><span></span><span></span>
+              <p>kaiwASCII.live.preview</p>
+            </div>
+            <pre aria-hidden="true">@@@@@@@###***++===--..
 @@@@@@###***+++==--..
 @@@###***+++==--..    
 ###***+++==--..       
@@ -101,126 +94,136 @@
 --..   ..--==++***###@
 ..   ..--==++***###@@@
 </pre>
-            </div>
-            <div class="floating-note note-a">Palette-aware color frames</div>
-            <div class="floating-note note-b">Export embed + JSON + snippet</div>
-          </aside>
-        </div>
-      </section>
+          </div>
+          <div class="floating-note note-a">Palette-aware color frames</div>
+          <div class="floating-note note-b">Export embed + JSON + snippet</div>
+        </aside>
+      </div>
+    </section>
 
-      <section class="ticker-wrap rounded-box border border-base-300 bg-base-100/70">
-        <div class="ticker-track" aria-hidden="true">
-          <span>VIDEO -> ASCII</span>
-          <span>PALETTE TUNING</span>
-          <span>LIVE PREVIEW</span>
-          <span>EMBED EXPORT</span>
-          <span>VIDEO -> ASCII</span>
-          <span>PALETTE TUNING</span>
-          <span>LIVE PREVIEW</span>
-          <span>EMBED EXPORT</span>
-        </div>
-      </section>
+    <section class="ticker-wrap rounded-box border border-base-300 bg-base-100/70">
+      <div class="ticker-track" aria-hidden="true">
+        <span>VIDEO -> ASCII</span>
+        <span>PALETTE TUNING</span>
+        <span>LIVE PREVIEW</span>
+        <span>EMBED EXPORT</span>
+        <span>VIDEO -> ASCII</span>
+        <span>PALETTE TUNING</span>
+        <span>LIVE PREVIEW</span>
+        <span>EMBED EXPORT</span>
+      </div>
+    </section>
 
-      <section id="workflow" class="grid gap-4 md:grid-cols-3">
-        <article class="feature-card reveal-up" style="--delay: 0.05s">
-          <p class="feature-kicker">01</p>
-          <h2 class="font-semibold text-lg">Drop your video</h2>
-          <p class="text-sm opacity-75">Load local footage instantly with compatibility fallback handling.</p>
-        </article>
-        <article class="feature-card reveal-up" style="--delay: 0.1s">
-          <p class="feature-kicker">02</p>
-          <h2 class="font-semibold text-lg">Dial in style</h2>
-          <p class="text-sm opacity-75">Tune threshold, gamma, quality, and frame colors until it looks right.</p>
-        </article>
-        <article class="feature-card reveal-up" style="--delay: 0.15s">
-          <p class="feature-kicker">03</p>
-          <h2 class="font-semibold text-lg">Ship anywhere</h2>
-          <p class="text-sm opacity-75">Export standalone HTML, JSON data, or an embeddable iframe snippet.</p>
-        </article>
-      </section>
+    <section id="workflow" class="grid gap-4 md:grid-cols-3">
+      <article class="feature-card reveal-up" style="--delay: 0.05s">
+        <p class="feature-kicker">01</p>
+        <h2 class="font-semibold text-lg">Drop your video</h2>
+        <p class="text-sm opacity-75">Load local footage instantly with compatibility fallback handling.</p>
+      </article>
+      <article class="feature-card reveal-up" style="--delay: 0.1s">
+        <p class="feature-kicker">02</p>
+        <h2 class="font-semibold text-lg">Dial in style</h2>
+        <p class="text-sm opacity-75">Tune threshold, gamma, quality, and frame colors until it looks right.</p>
+      </article>
+      <article class="feature-card reveal-up" style="--delay: 0.15s">
+        <p class="feature-kicker">03</p>
+        <h2 class="font-semibold text-lg">Ship anywhere</h2>
+        <p class="text-sm opacity-75">Export standalone HTML, JSON data, or an embeddable iframe snippet.</p>
+      </article>
+    </section>
 
-      <section class="landing-cta rounded-box border border-base-300 bg-base-100 shadow-xl reveal-up" style="--delay: 0.2s">
-        <div>
-          <p class="badge badge-secondary badge-outline">Ready to render?</p>
-          <h2 class="text-2xl font-bold mt-2">Turn your next clip into ASCII motion graphics.</h2>
-        </div>
-        <a href="./editor.html" class="btn btn-primary">Launch Editor</a>
-      </section>
-    </main>
+    <section class="landing-cta rounded-box border border-base-300 bg-base-100 shadow-xl reveal-up"
+      style="--delay: 0.2s">
+      <div>
+        <p class="badge badge-secondary badge-outline">Ready to render?</p>
+        <h2 class="text-2xl font-bold mt-2">Turn your next clip into ASCII motion graphics.</h2>
+      </div>
+      <a href="./editor.html" class="btn btn-primary">Launch Editor</a>
+    </section>
+  </main>
 
-    <script>
-      (function () {
-        const THEME_KEY = "ascii-gen-theme";
-        const select = document.getElementById("themeSelect");
-        if (!select) return;
+  <script>
+    (function () {
+      const THEME_KEY = "ascii-gen-theme";
+      const select = document.getElementById("themeSelect");
+      if (!select) return;
 
-        let savedTheme = null;
+      let savedTheme = null;
+      try {
+        savedTheme = localStorage.getItem(THEME_KEY);
+      } catch { }
+
+      const theme = savedTheme || document.body.getAttribute("data-theme") || "night";
+      document.body.setAttribute("data-theme", theme);
+      select.value = theme;
+
+      const lightLikeThemes = new Set(["corporate", "cupcake", "lofi"]);
+      document.documentElement.style.colorScheme = lightLikeThemes.has(theme) ? "light" : "dark";
+
+      const mountAnimatedLogo = async () => {
+        const mount = document.getElementById("heroLogoInline");
+        if (!mount) return;
         try {
-          savedTheme = localStorage.getItem(THEME_KEY);
-        } catch {}
+          // Plain fetch — no "no-cache" which can be blocked on file:// protocol
+          const response = await fetch("./kaiwASCII-logo-wide.svg");
+          if (!response.ok) throw new Error("SVG fetch failed");
+          const raw = await response.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(raw, "image/svg+xml");
+          const svg = doc.querySelector("svg");
+          if (!svg) throw new Error("No SVG element found");
 
-        const theme = savedTheme || document.body.getAttribute("data-theme") || "night";
-        document.body.setAttribute("data-theme", theme);
-        select.value = theme;
+          svg.classList.add("logo-draw-svg");
+          svg.removeAttribute("width");
+          svg.removeAttribute("height");
 
-        const lightLikeThemes = new Set(["corporate", "cupcake", "lofi"]);
-        document.documentElement.style.colorScheme = lightLikeThemes.has(theme) ? "light" : "dark";
+          const paths = [...svg.querySelectorAll("path")];
+          paths.forEach((path, index) => {
+            path.classList.add(`svg-elem-${index + 1}`);
+          });
 
-        const mountAnimatedLogo = async () => {
-          const mount = document.getElementById("heroLogoInline");
-          if (!mount) return;
-          try {
-            const response = await fetch("./kaiwASCII-logo-wide.svg", { cache: "no-cache" });
-            if (!response.ok) return;
-            const raw = await response.text();
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(raw, "image/svg+xml");
-            const svg = doc.querySelector("svg");
-            if (!svg) return;
+          mount.replaceChildren(svg);
 
-            svg.classList.add("logo-draw-svg");
-            svg.removeAttribute("width");
-            svg.removeAttribute("height");
+          const reduceMotion =
+            window.matchMedia &&
+            window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-            const paths = [...svg.querySelectorAll("path")];
-            paths.forEach((path, index) => {
-              path.classList.add(`svg-elem-${index + 1}`);
-            });
-
-            mount.replaceChildren(svg);
-
-            const reduceMotion =
-              window.matchMedia &&
-              window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-            if (reduceMotion) {
-              svg.classList.add("active");
-              return;
-            }
-
-            requestAnimationFrame(() => {
-              requestAnimationFrame(() => {
-                svg.classList.add("active");
-              });
-            });
-          } catch {
-            // Keep layout stable if SVG injection fails.
+          if (reduceMotion) {
+            svg.classList.add("active");
+            return;
           }
-        };
 
-        mountAnimatedLogo();
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              svg.classList.add("active");
+            });
+          });
+        } catch {
+          // Fallback: show the logo via CSS mask if SVG injection fails
+          const shell = document.querySelector(".hero-logo-shell");
+          if (shell) {
+            const img = document.createElement("span");
+            img.className = "brand-logo";
+            img.style.cssText = "width:100%;height:100%;display:block;";
+            mount.replaceChildren(img);
+          }
+        }
+      };
 
-        select.addEventListener("change", (event) => {
-          const nextTheme = event.target.value || "night";
-          document.body.setAttribute("data-theme", nextTheme);
-          document.documentElement.style.colorScheme = lightLikeThemes.has(nextTheme)
-            ? "light"
-            : "dark";
-          try {
-            localStorage.setItem(THEME_KEY, nextTheme);
-          } catch {}
-        });
-      })();
-    </script>
-  </body>
+      mountAnimatedLogo();
+
+      select.addEventListener("change", (event) => {
+        const nextTheme = event.target.value || "night";
+        document.body.setAttribute("data-theme", nextTheme);
+        document.documentElement.style.colorScheme = lightLikeThemes.has(nextTheme)
+          ? "light"
+          : "dark";
+        try {
+          localStorage.setItem(THEME_KEY, nextTheme);
+        } catch { }
+      });
+    })();
+  </script>
+</body>
+
 </html>
