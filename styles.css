@@ -351,8 +351,8 @@ a.brand-lockup.btn {
 .logo-draw-svg .svg-elem-1 {
   stroke-dashoffset: 1208.2578125px;
   stroke-dasharray: 1208.2578125px;
-  -webkit-transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 0s;
-  transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 0s;
+  -webkit-transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 0s;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 0s;
 }
 
 .logo-draw-svg.active .svg-elem-1 {
@@ -362,8 +362,8 @@ a.brand-lockup.btn {
 .logo-draw-svg .svg-elem-2 {
   stroke-dashoffset: 943.7394409179688px;
   stroke-dasharray: 943.7394409179688px;
-  -webkit-transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 0.12s;
-  transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 0.12s;
+  -webkit-transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 0.12s;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 0.12s;
 }
 
 .logo-draw-svg.active .svg-elem-2 {
@@ -373,8 +373,8 @@ a.brand-lockup.btn {
 .logo-draw-svg .svg-elem-3 {
   stroke-dashoffset: 980.535888671875px;
   stroke-dasharray: 980.535888671875px;
-  -webkit-transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 0.24s;
-  transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 0.24s;
+  -webkit-transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 0.24s;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 0.24s;
 }
 
 .logo-draw-svg.active .svg-elem-3 {
@@ -384,8 +384,8 @@ a.brand-lockup.btn {
 .logo-draw-svg .svg-elem-4 {
   stroke-dashoffset: 252.89895629882812px;
   stroke-dasharray: 252.89895629882812px;
-  -webkit-transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 0.36s;
-  transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 0.36s;
+  -webkit-transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 0.36s;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 0.36s;
 }
 
 .logo-draw-svg.active .svg-elem-4 {
@@ -395,8 +395,8 @@ a.brand-lockup.btn {
 .logo-draw-svg .svg-elem-5 {
   stroke-dashoffset: 3.906005859375px;
   stroke-dasharray: 3.906005859375px;
-  -webkit-transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 0.48s;
-  transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 0.48s;
+  -webkit-transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 0.48s;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 0.48s;
 }
 
 .logo-draw-svg.active .svg-elem-5 {
@@ -406,8 +406,8 @@ a.brand-lockup.btn {
 .logo-draw-svg .svg-elem-6 {
   stroke-dashoffset: 3.906005859375px;
   stroke-dasharray: 3.906005859375px;
-  -webkit-transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 0.6s;
-  transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 0.6s;
+  -webkit-transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 0.6s;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 0.6s;
 }
 
 .logo-draw-svg.active .svg-elem-6 {
@@ -417,8 +417,8 @@ a.brand-lockup.btn {
 .logo-draw-svg .svg-elem-7 {
   stroke-dashoffset: 3.906005859375px;
   stroke-dasharray: 3.906005859375px;
-  -webkit-transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 0.72s;
-  transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 0.72s;
+  -webkit-transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 0.72s;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 0.72s;
 }
 
 .logo-draw-svg.active .svg-elem-7 {
@@ -428,8 +428,8 @@ a.brand-lockup.btn {
 .logo-draw-svg .svg-elem-8 {
   stroke-dashoffset: 174.06199645996094px;
   stroke-dasharray: 174.06199645996094px;
-  -webkit-transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 0.84s;
-  transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 0.84s;
+  -webkit-transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 0.84s;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 0.84s;
 }
 
 .logo-draw-svg.active .svg-elem-8 {
@@ -439,8 +439,8 @@ a.brand-lockup.btn {
 .logo-draw-svg .svg-elem-9 {
   stroke-dashoffset: 899.5953979492188px;
   stroke-dasharray: 899.5953979492188px;
-  -webkit-transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 0.96s;
-  transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 0.96s;
+  -webkit-transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 0.96s;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 0.96s;
 }
 
 .logo-draw-svg.active .svg-elem-9 {
@@ -450,8 +450,8 @@ a.brand-lockup.btn {
 .logo-draw-svg .svg-elem-10 {
   stroke-dashoffset: 1150.5264892578125px;
   stroke-dasharray: 1150.5264892578125px;
-  -webkit-transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 1.08s;
-  transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 1.08s;
+  -webkit-transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 1.08s;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 1.08s;
 }
 
 .logo-draw-svg.active .svg-elem-10 {
@@ -461,8 +461,8 @@ a.brand-lockup.btn {
 .logo-draw-svg .svg-elem-11 {
   stroke-dashoffset: 690.063720703125px;
   stroke-dasharray: 690.063720703125px;
-  -webkit-transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 1.2s;
-  transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 1.2s;
+  -webkit-transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 1.2s;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 1.2s;
 }
 
 .logo-draw-svg.active .svg-elem-11 {
@@ -472,8 +472,8 @@ a.brand-lockup.btn {
 .logo-draw-svg .svg-elem-12 {
   stroke-dashoffset: 592.0114135742188px;
   stroke-dasharray: 592.0114135742188px;
-  -webkit-transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 1.3199999999999998s;
-  transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 1.3199999999999998s;
+  -webkit-transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 1.3199999999999998s;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 1.3199999999999998s;
 }
 
 .logo-draw-svg.active .svg-elem-12 {
@@ -483,8 +483,8 @@ a.brand-lockup.btn {
 .logo-draw-svg .svg-elem-13 {
   stroke-dashoffset: 312.50347900390625px;
   stroke-dasharray: 312.50347900390625px;
-  -webkit-transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 1.44s;
-  transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 1.44s;
+  -webkit-transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 1.44s;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 1.44s;
 }
 
 .logo-draw-svg.active .svg-elem-13 {
@@ -494,8 +494,8 @@ a.brand-lockup.btn {
 .logo-draw-svg .svg-elem-14 {
   stroke-dashoffset: 414.6986389160156px;
   stroke-dasharray: 414.6986389160156px;
-  -webkit-transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 1.56s;
-  transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 1.56s;
+  -webkit-transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 1.56s;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 1.56s;
 }
 
 .logo-draw-svg.active .svg-elem-14 {
@@ -505,8 +505,8 @@ a.brand-lockup.btn {
 .logo-draw-svg .svg-elem-15 {
   stroke-dashoffset: 312.2525329589844px;
   stroke-dasharray: 312.2525329589844px;
-  -webkit-transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 1.68s;
-  transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 1.68s;
+  -webkit-transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 1.68s;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 1.68s;
 }
 
 .logo-draw-svg.active .svg-elem-15 {
@@ -516,8 +516,8 @@ a.brand-lockup.btn {
 .logo-draw-svg .svg-elem-16 {
   stroke-dashoffset: 343.55322265625px;
   stroke-dasharray: 343.55322265625px;
-  -webkit-transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 1.7999999999999998s;
-  transition: stroke-dashoffset 1s cubic-bezier(0.95, 0.05, 0.795, 0.035) 1.7999999999999998s;
+  -webkit-transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 1.7999999999999998s;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.47, 0, 0.745, 0.715) 1.7999999999999998s;
 }
 
 .logo-draw-svg.active .svg-elem-16 {
