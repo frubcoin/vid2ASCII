@@ -46,6 +46,14 @@ a.brand-lockup.btn {
   outline: none !important;
 }
 
+/* Remove the dropdown arrow from the theme selector */
+#themeSelect {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: none !important;
+  padding-right: 0;
+}
+
 .brand-logo,
 .hero-logo {
   display: inline-block;
