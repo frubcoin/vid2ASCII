@@ -157,9 +157,7 @@ a.brand-lockup.btn {
 
 .preview-wrap {
   position: relative;
-  height: 560px;
-  min-height: 560px;
-  max-height: 560px;
+  aspect-ratio: 16 / 9;
   display: grid;
   place-items: center;
   padding: 1rem;
@@ -238,9 +236,7 @@ a.brand-lockup.btn {
 
 @media (max-width: 1024px) {
   .preview-wrap {
-    height: 440px;
-    min-height: 440px;
-    max-height: 440px;
+    aspect-ratio: 16 / 9;
   }
 
   .brand-wordmark {
