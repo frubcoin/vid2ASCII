@@ -1618,6 +1618,11 @@ async function onGenerateFrames() {
 
     state.frames = frames;
     state.colorFrames = colorFrames;
+
+    setStatus("Generating embed snippet... (this may take a moment)");
+    setProgress(100);
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
     const payload = buildPayload();
     const snippet = buildInlineEmbedSnippet(payload);
     const rawSnippet = buildInlineEmbedSnippet(payload, { mode: "raw" });
