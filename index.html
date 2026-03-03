@@ -1,0 +1,483 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Live ASCII Editor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body data-theme="night" class="min-h-screen bg-base-200 text-base-content">
+    <main class="mx-auto flex w-full max-w-[1280px] flex-col gap-4 p-4 lg:p-8">
+      <nav class="navbar rounded-box border border-base-300 bg-base-100/85 px-4 shadow-xl backdrop-blur">
+        <div class="flex-1">
+          <a href="#" class="btn btn-ghost text-lg font-semibold">ASCII Gen</a>
+        </div>
+        <div class="hidden gap-2 md:flex">
+          <a href="#animations" class="btn btn-ghost btn-sm">Animations</a>
+          <a href="#how-it-works" class="btn btn-ghost btn-sm">How It Works</a>
+          <a href="#faq" class="btn btn-ghost btn-sm">FAQ</a>
+        </div>
+        <div class="ml-2 flex items-center gap-2">
+          <label class="hidden items-center gap-2 lg:flex">
+            <span class="text-sm opacity-70">Theme</span>
+            <select id="themeSelect" class="select select-sm select-bordered">
+              <option value="night">Night</option>
+              <option value="dracula">Dracula</option>
+              <option value="synthwave">Synthwave</option>
+              <option value="nord">Nord</option>
+              <option value="forest">Forest</option>
+              <option value="luxury">Luxury</option>
+              <option value="corporate">Corporate</option>
+              <option value="cupcake">Cupcake</option>
+              <option value="sunset">Sunset</option>
+              <option value="lofi">Lofi</option>
+            </select>
+          </label>
+          <a href="#cta" class="btn btn-primary btn-sm">Get Access $9.99</a>
+        </div>
+      </nav>
+
+      <section class="theme-studio card border border-base-300 bg-base-100/80 shadow-xl backdrop-blur">
+        <div class="card-body gap-3 py-4">
+          <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h2 class="text-base font-semibold">Theme Studio</h2>
+              <p class="text-sm opacity-70">Pick from 10 curated themes for your workspace.</p>
+            </div>
+            <label class="flex items-center gap-2 lg:hidden">
+              <span class="text-sm opacity-70">Theme</span>
+              <select id="themeSelectMobile" class="select select-sm select-bordered">
+                <option value="night">Night</option>
+                <option value="dracula">Dracula</option>
+                <option value="synthwave">Synthwave</option>
+                <option value="nord">Nord</option>
+                <option value="forest">Forest</option>
+                <option value="luxury">Luxury</option>
+                <option value="corporate">Corporate</option>
+                <option value="cupcake">Cupcake</option>
+                <option value="sunset">Sunset</option>
+                <option value="lofi">Lofi</option>
+              </select>
+            </label>
+          </div>
+          <div class="theme-grid">
+            <button type="button" class="theme-chip" data-theme-option="night">Night</button>
+            <button type="button" class="theme-chip" data-theme-option="dracula">Dracula</button>
+            <button type="button" class="theme-chip" data-theme-option="synthwave">Synthwave</button>
+            <button type="button" class="theme-chip" data-theme-option="nord">Nord</button>
+            <button type="button" class="theme-chip" data-theme-option="forest">Forest</button>
+            <button type="button" class="theme-chip" data-theme-option="luxury">Luxury</button>
+            <button type="button" class="theme-chip" data-theme-option="corporate">Corporate</button>
+            <button type="button" class="theme-chip" data-theme-option="cupcake">Cupcake</button>
+            <button type="button" class="theme-chip" data-theme-option="sunset">Sunset</button>
+            <button type="button" class="theme-chip" data-theme-option="lofi">Lofi</button>
+          </div>
+        </div>
+      </section>
+
+      <header class="hero rounded-box border border-base-300 bg-base-100 shadow-xl">
+        <div class="hero-content w-full px-4 py-8 md:px-8">
+          <div class="grid w-full items-center gap-8 lg:grid-cols-[1.3fr_1fr]">
+            <div class="max-w-2xl">
+              <div class="badge badge-primary badge-outline">Runs fully in your browser</div>
+              <h1 class="mt-3 text-4xl font-bold md:text-5xl">
+                Add mesmerizing ASCII art animations to any website.
+              </h1>
+              <p class="py-4 text-base-content/80">
+                Convert videos to lightweight, embeddable ASCII players with live controls and
+                one-click export.
+              </p>
+              <ul class="grid gap-2 text-sm md:text-base">
+                <li class="feature-line">Drop-in React component</li>
+                <li class="feature-line">CLI tool to convert videos to ASCII</li>
+                <li class="feature-line">Growing animation library</li>
+                <li class="feature-line">Private Discord for support</li>
+              </ul>
+              <div class="mt-5 flex flex-wrap gap-2">
+                <a href="#cta" class="btn btn-primary btn-sm md:btn-md">Get Access $9.99</a>
+                <a href="#animations" class="btn btn-outline btn-sm md:btn-md">View Animations</a>
+              </div>
+              <p class="mt-3 text-sm opacity-70">
+                One-time payment. Lifetime access. Free updates. Private Discord.
+              </p>
+            </div>
+
+            <div class="ascii-hero-preview rounded-box border border-base-300 bg-base-300/30 p-4">
+              <pre class="ascii-pulse text-primary-content/90">
+  .-========-.
+ .'  __  __  '.
+/   /  \/  \   \
+|  |  /\ /\ |  |
+|  | / / \ \|  |
+\   \/ /__\ \  /
+ '.  \______/ .'
+   '-.____.-'
+              </pre>
+              <div class="mt-2 flex flex-wrap gap-2">
+                <span class="badge badge-primary badge-soft">React</span>
+                <span class="badge badge-secondary badge-soft">CLI</span>
+                <span class="badge badge-accent badge-soft">Embeddable</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section id="editor" class="card border border-base-300 bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h2 class="card-title text-2xl">Live ASCII Editor</h2>
+          <p class="text-base-content/80">
+            Real-time preview, powerful controls, and instant export. Runs 100% locally for
+            maximum performance and privacy.
+          </p>
+          <p class="text-sm text-base-content/70">Includes <code>ascii.sh</code> for terminal power users.</p>
+        </div>
+      </section>
+
+      <section class="grid gap-4 lg:grid-cols-[370px_1fr]" aria-label="ASCII editor workspace">
+        <aside class="card border border-base-300 bg-base-100 shadow-xl">
+          <div class="card-body gap-4">
+            <h2 class="card-title">Configuration</h2>
+
+            <label class="form-control w-full">
+              <div class="label">
+                <span class="label-text">Source</span>
+              </div>
+              <input
+                id="videoInput"
+                type="file"
+                accept="video/*,.mp4,.mov,.m4v,.webm,.mkv,.avi,.wmv,.flv,.3gp,.ogv,.ts,.m2ts,.mts,.vob"
+                class="file-input file-input-bordered"
+              />
+              <div class="label">
+                <span class="label-text-alt" id="sourceHint">Select a local video file.</span>
+              </div>
+            </label>
+
+            <label class="form-control w-full">
+              <div class="label">
+                <span class="label-text">Animation Name</span>
+              </div>
+              <input
+                id="animationName"
+                type="text"
+                value="animation"
+                maxlength="64"
+                class="input input-bordered"
+              />
+              <div class="label">
+                <span class="label-text-alt">
+                  Will be saved as <code id="savePath">./animations/animation</code>
+                </span>
+              </div>
+            </label>
+
+            <div class="divider my-0"></div>
+
+            <label class="form-control w-full">
+              <div class="label">
+                <span class="label-text">FPS</span>
+                <output id="fpsValue" for="fps" class="label-text-alt">15</output>
+              </div>
+              <input id="fps" type="range" min="1" max="30" step="1" value="15" class="range range-primary" />
+            </label>
+
+            <div class="grid gap-4 sm:grid-cols-2">
+              <label class="form-control w-full">
+                <div class="label">
+                  <span class="label-text">Threshold</span>
+                  <output id="thresholdValue" for="threshold" class="label-text-alt">188</output>
+                </div>
+                <input
+                  id="threshold"
+                  type="range"
+                  min="0"
+                  max="255"
+                  step="1"
+                  value="188"
+                  class="range range-primary"
+                />
+              </label>
+
+              <label class="form-control w-full">
+                <div class="label">
+                  <span class="label-text">Gamma</span>
+                  <output id="gammaValue" for="gamma" class="label-text-alt">2.0</output>
+                </div>
+                <input
+                  id="gamma"
+                  type="range"
+                  min="0.2"
+                  max="3"
+                  step="0.1"
+                  value="2.0"
+                  class="range range-primary"
+                />
+              </label>
+            </div>
+
+            <label class="form-control w-full">
+              <div class="label">
+                <span class="label-text">Font Aspect Ratio</span>
+                <output id="fontAspectValue" for="fontAspectRatio" class="label-text-alt">2.0</output>
+              </div>
+              <input
+                id="fontAspectRatio"
+                type="range"
+                min="0.8"
+                max="3.2"
+                step="0.1"
+                value="2.0"
+                class="range range-primary"
+              />
+            </label>
+
+            <div class="grid gap-3 rounded-box border border-base-300 bg-base-200/40 p-3">
+              <div class="form-control">
+                <label class="label cursor-pointer py-1">
+                  <span class="label-text">Enable Color Output</span>
+                  <input id="enableColor" type="checkbox" class="toggle toggle-primary" />
+                </label>
+              </div>
+
+              <label class="form-control">
+                <div class="label py-1">
+                  <span class="label-text">Color Style</span>
+                </div>
+                <select id="colorMode" class="select select-bordered select-sm">
+                  <option value="avg" selected>Source Palette (Detailed)</option>
+                  <option value="gradient">Neon Cycle</option>
+                </select>
+              </label>
+
+              <div class="form-control">
+                <label class="label cursor-pointer py-1">
+                  <span class="label-text">Glow</span>
+                  <input id="enableGlow" type="checkbox" class="toggle toggle-accent" checked />
+                </label>
+              </div>
+            </div>
+
+            <div class="divider my-0"></div>
+
+            <div class="form-control">
+              <div class="label">
+                <span class="label-text">Quality Levels</span>
+              </div>
+              <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <button
+                  class="quality btn btn-outline btn-sm justify-start active"
+                  data-quality="low"
+                  role="radio"
+                  aria-checked="true"
+                >
+                  Low <span class="opacity-60">80 col</span>
+                </button>
+                <button
+                  class="quality btn btn-outline btn-sm justify-start"
+                  data-quality="medium"
+                  role="radio"
+                  aria-checked="false"
+                >
+                  Medium <span class="opacity-60">160 col</span>
+                </button>
+                <button
+                  class="quality btn btn-outline btn-sm justify-start"
+                  data-quality="high"
+                  role="radio"
+                  aria-checked="false"
+                >
+                  High <span class="opacity-60">240 col</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="grid gap-2 pt-2">
+              <div class="form-control rounded-box border border-base-300 bg-base-200/40 p-2">
+                <label class="label cursor-pointer py-1">
+                  <span class="label-text">Auto Preview Loop</span>
+                  <input id="autoPreview" type="checkbox" class="toggle toggle-secondary" checked />
+                </label>
+              </div>
+              <button id="togglePreview" class="btn btn-outline">Start Preview</button>
+              <button id="generateFrames" class="btn btn-primary">Generate Frames</button>
+              <button id="downloadEmbed" class="btn btn-outline" disabled>Download Embed HTML</button>
+              <button id="downloadJson" class="btn btn-outline" disabled>Download JSON</button>
+              <button id="copySnippet" class="btn btn-outline" disabled>Copy Embed Snippet</button>
+            </div>
+
+            <div class="space-y-2 pt-1">
+              <p id="statusText" class="text-sm opacity-80">Load a video to begin.</p>
+              <progress id="progressBar" class="progress progress-primary w-full" value="0" max="100"></progress>
+            </div>
+          </div>
+        </aside>
+
+        <section class="card border border-base-300 bg-base-100 shadow-xl">
+          <div class="card-body p-0">
+            <div class="flex items-center justify-between border-b border-base-300 px-4 py-3">
+              <h2 class="card-title text-base">Preview</h2>
+              <p id="dimensions" class="text-xs opacity-70">-</p>
+            </div>
+            <div class="preview-wrap">
+              <pre id="asciiPreview" aria-live="polite"></pre>
+              <p id="emptyState">Preview will appear here once a video is loaded.</p>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="card border border-base-300 bg-base-100 shadow-xl">
+        <div class="card-body p-0">
+          <div class="border-b border-base-300 px-4 py-3">
+            <h2 class="card-title text-base">Embeddable Snippet</h2>
+          </div>
+          <textarea
+            id="embedCode"
+            readonly
+            class="textarea h-52 w-full rounded-none border-0 bg-base-300/40 font-mono text-xs"
+            placeholder="Generate frames, then copy or download the embeddable ASCII player."
+          ></textarea>
+        </div>
+      </section>
+
+      <section class="card border border-base-300 bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h2 class="card-title text-2xl">Everything You Need</h2>
+          <p class="text-base-content/80">
+            A complete toolkit for adding ASCII art animations to React projects and beyond.
+          </p>
+          <div class="grid gap-3 md:grid-cols-2">
+            <article class="feature-card">
+              <h3 class="font-semibold">React Component</h3>
+              <p class="text-sm opacity-75">
+                Drop-in player with quality selection, FPS controls, and reduced-motion support.
+              </p>
+            </article>
+            <article class="feature-card">
+              <h3 class="font-semibold">Live Editor</h3>
+              <p class="text-sm opacity-75">
+                Drag and drop videos, tune visual settings, and preview output instantly.
+              </p>
+            </article>
+            <article class="feature-card">
+              <h3 class="font-semibold">Animation Library</h3>
+              <p class="text-sm opacity-75">
+                Pre-made animations in low, medium, and high tiers with ongoing additions.
+              </p>
+            </article>
+            <article class="feature-card">
+              <h3 class="font-semibold">Private Discord</h3>
+              <p class="text-sm opacity-75">
+                Creator community for support, feedback, and sharing new ASCII work.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="animations" class="card border border-base-300 bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h2 class="card-title text-2xl">Animation Library</h2>
+          <p class="text-base-content/80">
+            Pre-made ASCII animations ready to drop into your project. 11 included, 2 coming soon.
+          </p>
+          <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <article class="lib-card"><h3>Planet</h3><p>200 frames</p><span>L M H</span></article>
+            <article class="lib-card"><h3>Cube</h3><p>134 frames</p><span>L M H</span></article>
+            <article class="lib-card"><h3>Computer</h3><p>78 frames</p><span>L M H</span></article>
+            <article class="lib-card"><h3>Rocket</h3><p>80 frames</p><span>L M H</span></article>
+            <article class="lib-card"><h3>Wave</h3><p>300 frames</p><span>L M H</span></article>
+            <article class="lib-card"><h3>Coin</h3><p>37 frames</p><span>L M H</span></article>
+            <article class="lib-card"><h3>Cat</h3><p>16 frames</p><span>L M H</span></article>
+            <article class="lib-card coming"><h3>Spaceship</h3><p>Coming soon</p><span>{ }</span></article>
+          </div>
+        </div>
+      </section>
+
+      <section id="how-it-works" class="card border border-base-300 bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h2 class="card-title text-2xl">How It Works</h2>
+          <div class="grid gap-3 md:grid-cols-3">
+            <article class="step-card">
+              <span>01</span>
+              <h3>Purchase</h3>
+              <p>One-time payment. No subscription, no recurring fees.</p>
+            </article>
+            <article class="step-card">
+              <span>02</span>
+              <h3>Get Full Access</h3>
+              <p>Private GitHub access plus community support in Discord.</p>
+            </article>
+            <article class="step-card">
+              <span>03</span>
+              <h3>Create and Export</h3>
+              <p>Use the local editor or CLI to convert videos into embeddable ASCII.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="faq" class="card border border-base-300 bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h2 class="card-title text-2xl">Frequently Asked Questions</h2>
+          <div class="space-y-2">
+            <div class="collapse collapse-plus border border-base-300 bg-base-200/50">
+              <input type="radio" name="faq-accordion" checked />
+              <div class="collapse-title font-medium">Can I generate my own animations?</div>
+              <div class="collapse-content text-sm opacity-80">
+                Yes. Upload a local video in the editor, tweak settings, and export instantly.
+              </div>
+            </div>
+            <div class="collapse collapse-plus border border-base-300 bg-base-200/50">
+              <input type="radio" name="faq-accordion" />
+              <div class="collapse-title font-medium">What are the quality levels?</div>
+              <div class="collapse-content text-sm opacity-80">
+                Low (80 cols), Medium (160 cols), and High (240 cols). Choose based on file size and sharpness.
+              </div>
+            </div>
+            <div class="collapse collapse-plus border border-base-300 bg-base-200/50">
+              <input type="radio" name="faq-accordion" />
+              <div class="collapse-title font-medium">Does it support reduced motion?</div>
+              <div class="collapse-content text-sm opacity-80">
+                Yes. Exported embeds and preview runtime respect <code>prefers-reduced-motion</code>.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="cta" class="card border border-primary/40 bg-base-100 shadow-xl">
+        <div class="card-body items-center text-center">
+          <h2 class="card-title text-2xl">Ready to Add ASCII Gen?</h2>
+          <p class="max-w-2xl text-base-content/80">
+            Get the React component, live editor workflow, embeddable exports, and ongoing animation updates.
+          </p>
+          <div class="flex flex-wrap justify-center gap-2">
+            <button class="btn btn-primary">Get Access $9.99</button>
+            <button class="btn btn-outline">View Animations</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <video id="sourceVideo" muted playsinline preload="auto"></video>
+    <canvas id="frameCanvas" aria-hidden="true"></canvas>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>
+
