@@ -167,6 +167,23 @@
   <script>
     (function () {
       const THEME_KEY = "ascii-gen-theme";
+      // Logo animation — runs unconditionally
+      const mountAnimatedLogo = () => {
+        const svg = document.getElementById("heroLogoInline");
+        if (!svg) return;
+        const reduceMotion =
+          window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (reduceMotion) {
+          svg.classList.add("active");
+          return;
+        }
+        requestAnimationFrame(() => {
+          setTimeout(() => svg.classList.add("active"), 50);
+        });
+      };
+      mountAnimatedLogo();
+
+      // Theme selector — only present in editor / pages with navbar
       const select = document.getElementById("themeSelect");
       if (!select) return;
 
@@ -181,24 +198,6 @@
 
       const lightLikeThemes = new Set(["corporate", "cupcake", "lofi"]);
       document.documentElement.style.colorScheme = lightLikeThemes.has(theme) ? "light" : "dark";
-
-      const mountAnimatedLogo = () => {
-        const svg = document.getElementById("heroLogoInline");
-        if (!svg) return;
-        const reduceMotion =
-          window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        if (reduceMotion) {
-          svg.classList.add("active");
-          return;
-        }
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            svg.classList.add("active");
-          });
-        });
-      };
-
-      mountAnimatedLogo();
 
       select.addEventListener("change", (event) => {
         const nextTheme = event.target.value || "night";
