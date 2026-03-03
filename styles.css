@@ -183,6 +183,7 @@ a.brand-lockup.btn {
 
 #asciiPreview {
   margin: 0;
+
   width: auto;
   min-height: 0;
   max-height: none;
@@ -578,8 +579,9 @@ a.brand-lockup.btn {
 }
 
 .ascii-window {
-  width: min(100%, 480px);
-  height: 380px;
+  width: min(100%, 720px);
+  aspect-ratio: 16 / 9;
+  height: auto;
   display: flex;
   flex-direction: column;
   border: 1px solid color-mix(in srgb, var(--color-primary) 30%, var(--color-base-300));
@@ -596,6 +598,8 @@ a.brand-lockup.btn {
   padding: 0.55rem 0.75rem;
   border-bottom: 1px solid var(--color-base-300);
   background: color-mix(in srgb, var(--color-base-300) 45%, transparent);
+  /* Ensure header stays rigid */
+  flex-shrink: 0;
 }
 
 .ascii-header span {
@@ -622,11 +626,25 @@ a.brand-lockup.btn {
   color: color-mix(in srgb, var(--color-base-content) 90%, var(--color-base-100));
 }
 
-/* Iframe fills remaining space in the flex .ascii-window */
+/* 
+  To move the area viewed down, you can increase the height beyond 100% 
+  and pull it up with a negative margin-top.
+*/
 .ascii-window iframe {
   display: block;
+
+  /* Make the iframe span the full width and height of its container wrapper */
   width: 100%;
+  height: 100%;
   flex: 1 1 0;
+
+  /* If the content inside the iframe is a fixed large size and you want to shrink it down, 
+     you can use a css zoom or transform. For example:
+     width: 200%;
+     height: 200%;
+     transform: scale(0.5);
+     transform-origin: top left;
+  */
   min-height: 0;
   border: 0;
 }
