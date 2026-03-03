@@ -127,6 +127,13 @@
               </label>
             </div>
 
+            <div class="form-control">
+              <label class="label cursor-pointer py-1">
+                <span class="label-text">Color Dithering</span>
+                <input id="colorDithering" type="checkbox" class="toggle toggle-primary" checked />
+              </label>
+            </div>
+
             <label class="form-control">
               <div class="label py-1">
                 <span class="label-text">Color Style</span>
@@ -261,6 +268,15 @@
                 </label>
               </div>
             </div>
+
+            <label class="form-control w-full">
+              <div class="label py-1">
+                <span class="label-text">Dithering</span>
+                <output id="ditherAmountValue" for="ditherAmount" class="label-text-alt">0.15</output>
+              </div>
+              <input id="ditherAmount" type="range" min="0" max="1" step="0.01" value="0.15"
+                class="range range-primary" />
+            </label>
 
             <label class="form-control w-full">
               <div class="label py-1">

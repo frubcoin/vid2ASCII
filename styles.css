@@ -54,6 +54,11 @@ a.brand-lockup.btn {
   padding-right: 0;
 }
 
+#themeSelect option {
+  background-color: var(--color-base-100);
+  color: var(--color-base-content);
+}
+
 .brand-logo,
 .hero-logo {
   display: inline-block;

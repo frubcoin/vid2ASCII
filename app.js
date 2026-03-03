@@ -14,6 +14,13 @@ const CHAR_SETS = {
 };
 const FRAME_DELIMITER = String.fromCharCode(30);
 const DEFAULT_COLOR_SMOOTHING = 0.34;
+// 4x4 Bayer Matrix for Ordered Dithering (normalized 0-1)
+const BAYER_MATRIX = [
+  [0 / 16, 8 / 16, 2 / 16, 10 / 16],
+  [12 / 16, 4 / 16, 14 / 16, 6 / 16],
+  [3 / 16, 11 / 16, 1 / 16, 9 / 16],
+  [15 / 16, 7 / 16, 13 / 16, 5 / 16]
+];
 const FFMPEG_UMD_URL = "https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.15/dist/umd/ffmpeg.js";
 const FFMPEG_UTIL_UMD_URL = "https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/index.js";
 const FFMPEG_CORE_BASE_URL = "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd";
@@ -187,6 +194,7 @@ const elements = {
   fontAspectRatio: document.getElementById("fontAspectRatio"),
   fontAspectValue: document.getElementById("fontAspectValue"),
   enableColor: document.getElementById("enableColor"),
+  colorDithering: document.getElementById("colorDithering"),
   colorMode: document.getElementById("colorMode"),
   colorBrightness: document.getElementById("colorBrightness"),
   colorBrightnessValue: document.getElementById("colorBrightnessValue"),
@@ -211,6 +219,8 @@ const elements = {
   charSetCustomWrap: document.getElementById("charSetCustomWrap"),
   charSetCustom: document.getElementById("charSetCustom"),
   invertMode: document.getElementById("invertMode"),
+  ditherAmount: document.getElementById("ditherAmount"),
+  ditherAmountValue: document.getElementById("ditherAmountValue"),
   edgeWeight: document.getElementById("edgeWeight"),
   edgeWeightValue: document.getElementById("edgeWeightValue"),
   previewBgColor: document.getElementById("previewBgColor"),
@@ -248,6 +258,7 @@ const state = {
   gamma: Number(elements.gamma.value),
   fontAspectRatio: Number(elements.fontAspectRatio.value),
   enableColor: elements.enableColor.checked,
+  colorDithering: elements.colorDithering?.checked ?? true,
   colorMode: elements.colorMode.value,
   colorBrightness: Number(elements.colorBrightness?.value || 1),
   colorSaturation: Number(elements.colorSaturation?.value || 1),
@@ -264,6 +275,7 @@ const state = {
   charSet: "classic",
   charSetCustom: "@#%+=:-. ",
   invertMode: false,
+  ditherAmount: 0.15,
   edgeWeight: 0.36,
   previewBgColor: "#000000",
   // Misc
@@ -314,6 +326,7 @@ function init() {
   );
   bindRange(elements.bgLumCutoff, elements.bgLumCutoffValue, (v) => Number(v).toString());
   bindRange(elements.bgTolerance, elements.bgToleranceValue, (v) => Number(v).toString());
+  bindRange(elements.ditherAmount, elements.ditherAmountValue, (v) => Number(v).toFixed(2));
   bindRange(elements.edgeWeight, elements.edgeWeightValue, (v) => Number(v).toFixed(2));
 
   elements.videoInput.addEventListener("change", onSourceSelected);
@@ -324,6 +337,7 @@ function init() {
   elements.downloadJson.addEventListener("click", onDownloadJson);
   elements.copySnippet.addEventListener("click", onCopySnippet);
   elements.enableColor.addEventListener("change", syncVisualOptions);
+  elements.colorDithering?.addEventListener("change", syncVisualOptions);
   elements.colorMode.addEventListener("change", syncVisualOptions);
   elements.autoPreview.addEventListener("change", syncAutoPreview);
   elements.sourceVideo.addEventListener("ended", handlePreviewEnded);
@@ -437,6 +451,7 @@ function bindRange(input, output, formatter) {
 
 function syncVisualOptions() {
   state.enableColor = elements.enableColor.checked;
+  state.colorDithering = elements.colorDithering?.checked ?? true;
   state.colorMode = elements.colorMode.value;
   state.colorBrightness = Number(elements.colorBrightness?.value || 1);
   state.colorSaturation = Number(elements.colorSaturation?.value || 1);
@@ -477,6 +492,7 @@ function syncRenderingOptions() {
   state.charSet = elements.charSet?.value ?? "classic";
   state.charSetCustom = elements.charSetCustom?.value || "@#%+=:-. ";
   state.invertMode = elements.invertMode?.checked ?? false;
+  state.ditherAmount = Number(elements.ditherAmount?.value ?? 0.15);
   state.edgeWeight = Number(elements.edgeWeight?.value ?? 0.36);
 
   const isCustom = state.charSet === "custom";
@@ -1068,17 +1084,34 @@ function captureFrameAsAscii(options = {}) {
     luminance[p] = lum;
   }
 
-  // Edge detection
+  // Edge detection using Sobel operator
   const edges = buffers.edges;
-  for (let y = 0; y < rows; y += 1) {
+  for (let y = 1; y < rows - 1; y += 1) {
     const rowOffset = y * cols;
-    for (let x = 0; x < cols; x += 1) {
+    for (let x = 1; x < cols - 1; x += 1) {
       const p = rowOffset + x;
-      const center = luminance[p];
-      const right = x + 1 < cols ? luminance[p + 1] : center;
-      const down = y + 1 < rows ? luminance[p + cols] : center;
-      const gradient = Math.abs(right - center) + Math.abs(down - center);
-      edges[p] = Math.min(1, gradient * 2);
+
+      // Sobel Kernels
+      // Gx: [-1, 0, 1]  Gy: [-1, -2, -1]
+      //     [-2, 0, 2]      [ 0,  0,  0]
+      //     [-1, 0, 1]      [ 1,  2,  1]
+
+      const tl = luminance[p - cols - 1];
+      const tc = luminance[p - cols];
+      const tr = luminance[p - cols + 1];
+
+      const l = luminance[p - 1];
+      const r = luminance[p + 1];
+
+      const bl = luminance[p + cols - 1];
+      const bc = luminance[p + cols];
+      const br = luminance[p + cols + 1];
+
+      const gx = -tl + tr - 2 * l + 2 * r - bl + br;
+      const gy = -tl - 2 * tc - tr + bl + 2 * bc + br;
+
+      const gradient = Math.sqrt(gx * gx + gy * gy);
+      edges[p] = Math.min(1, gradient);
     }
   }
 
@@ -1100,6 +1133,15 @@ function captureFrameAsAscii(options = {}) {
       }
 
       let light = lum * 0.82 + edges[p] * edgeW;
+
+      // Ordered Dithering
+      if (state.ditherAmount > 0) {
+        const ditherValue = BAYER_MATRIX[y % 4][x % 4];
+        // Center the dither around 0 (-0.5 to 0.5) and scale by the user amount
+        const ditherAdjust = (ditherValue - 0.5) * state.ditherAmount;
+        light += ditherAdjust;
+      }
+
       light = Math.pow(clamp01(light), 1 / gamma);
       light = (light - threshold) * 1.55 + 0.5;
       light = clamp01(light);
@@ -1138,7 +1180,7 @@ function captureFrameAsAscii(options = {}) {
         }
         palette = state.livePalette;
       }
-      const colorIndexes = mapPixelsToPalette(adjustedColorData, palette, pixelCount);
+      const colorIndexes = mapPixelsToPalette(adjustedColorData, palette, cols, rows);
       colorFrame = buildColorFrameData(palette, colorIndexes);
       colorHtml = buildColorHtml(asciiFlat, cols, colorFrame);
     } else if (state.colorMode === "gradient") {
@@ -1372,27 +1414,64 @@ function clamp8(value) {
   return Math.round(value);
 }
 
-function mapPixelsToPalette(pixelData, palette, pixelCount) {
+function mapPixelsToPalette(pixelData, palette, cols, rows) {
+  const pixelCount = cols * rows;
   const indexes = new Uint8Array(pixelCount);
-  for (let p = 0, i = 0; p < pixelCount; p += 1, i += 4) {
-    const red = pixelData[i];
-    const green = pixelData[i + 1];
-    const blue = pixelData[i + 2];
+  const data = new Float32Array(pixelData.length);
+  for (let i = 0; i < pixelData.length; i += 1) {
+    data[i] = pixelData[i];
+  }
 
-    let bestIndex = 0;
-    let bestDistance = Number.POSITIVE_INFINITY;
-    for (let paletteIndex = 0; paletteIndex < palette.length; paletteIndex += 1) {
-      const color = palette[paletteIndex];
-      const dr = red - color[0];
-      const dg = green - color[1];
-      const db = blue - color[2];
-      const distance = dr * dr * 0.3 + dg * dg * 0.59 + db * db * 0.11;
-      if (distance < bestDistance) {
-        bestDistance = distance;
-        bestIndex = paletteIndex;
+  for (let y = 0; y < rows; y += 1) {
+    for (let x = 0; x < cols; x += 1) {
+      const p = y * cols + x;
+      const i = p * 4;
+
+      const oldR = data[i];
+      const oldG = data[i + 1];
+      const oldB = data[i + 2];
+
+      let bestIndex = 0;
+      let bestDistance = Number.POSITIVE_INFINITY;
+
+      for (let paletteIndex = 0; paletteIndex < palette.length; paletteIndex += 1) {
+        const color = palette[paletteIndex];
+        const dr = oldR - color[0];
+        const dg = oldG - color[1];
+        const db = oldB - color[2];
+        const distance = dr * dr * 0.3 + dg * dg * 0.59 + db * db * 0.11;
+        if (distance < bestDistance) {
+          bestDistance = distance;
+          bestIndex = paletteIndex;
+        }
+      }
+
+      indexes[p] = bestIndex;
+
+      if (state.colorDithering) {
+        const newColor = palette[bestIndex];
+        const errR = oldR - newColor[0];
+        const errG = oldG - newColor[1];
+        const errB = oldB - newColor[2];
+
+        // Floyd-Steinberg Distribution
+        const distribute = (dx, dy, weight) => {
+          const nx = x + dx;
+          const ny = y + dy;
+          if (nx >= 0 && nx < cols && ny >= 0 && ny < rows) {
+            const ni = (ny * cols + nx) * 4;
+            data[ni] += errR * weight;
+            data[ni + 1] += errG * weight;
+            data[ni + 2] += errB * weight;
+          }
+        };
+
+        distribute(1, 0, 7 / 16);
+        distribute(-1, 1, 3 / 16);
+        distribute(0, 1, 5 / 16);
+        distribute(1, 1, 1 / 16);
       }
     }
-    indexes[p] = bestIndex;
   }
   return indexes;
 }
