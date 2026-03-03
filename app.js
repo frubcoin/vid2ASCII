@@ -9,6 +9,7 @@ const ASCII_DENSITY =
 const FRAME_DELIMITER = String.fromCharCode(30);
 const DEFAULT_COLOR_SMOOTHING = 0.34;
 const FFMPEG_UMD_URL = "https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.15/dist/umd/ffmpeg.js";
+const FFMPEG_UTIL_UMD_URL = "https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.2/dist/umd/index.js";
 const FFMPEG_CORE_BASE_URL = "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd";
 const THEME_STORAGE_KEY = "ascii-gen-theme";
 const AVAILABLE_THEMES = [
@@ -238,6 +239,7 @@ const state = {
   ffmpegLoading: false,
   ffmpeg: null,
   ffmpegApi: null,
+  ffmpegAssetUrls: null,
   colorSmoothingCache: { live: null, export: null },
   livePalette: null,
   captureTick: 0,
@@ -629,11 +631,25 @@ async function ensureFFmpegLoaded() {
   setStatus("Loading compatibility transcoder...");
   try {
     await loadScriptOnce(FFMPEG_UMD_URL);
+    await loadScriptOnce(FFMPEG_UTIL_UMD_URL);
+
+    const FFmpegClass = window.FFmpegWASM?.FFmpeg;
+    if (FFmpegClass) {
+      const assetUrls = await resolveFFmpegAssetUrls();
+      const ffmpeg = new FFmpegClass();
+      await ffmpeg.load(assetUrls);
+      state.ffmpeg = ffmpeg;
+      state.ffmpegApi = "modern";
+      state.ffmpegReady = true;
+      return ffmpeg;
+    }
+
     const createFFmpeg = window.FFmpeg?.createFFmpeg;
     if (createFFmpeg) {
+      const assetUrls = await resolveFFmpegAssetUrls();
       const ffmpeg = createFFmpeg({
         log: false,
-        corePath: `${FFMPEG_CORE_BASE_URL}/ffmpeg-core.js`,
+        corePath: assetUrls.coreURL,
       });
       await ffmpeg.load();
       state.ffmpeg = ffmpeg;
@@ -642,23 +658,45 @@ async function ensureFFmpegLoaded() {
       return ffmpeg;
     }
 
-    const FFmpegClass = window.FFmpegWASM?.FFmpeg;
-    if (FFmpegClass) {
-      const ffmpeg = new FFmpegClass();
-      await ffmpeg.load({
-        coreURL: `${FFMPEG_CORE_BASE_URL}/ffmpeg-core.js`,
-        wasmURL: `${FFMPEG_CORE_BASE_URL}/ffmpeg-core.wasm`,
-      });
-      state.ffmpeg = ffmpeg;
-      state.ffmpegApi = "modern";
-      state.ffmpegReady = true;
-      return ffmpeg;
-    }
-
     throw new Error("FFmpeg loader unavailable.");
   } finally {
     state.ffmpegLoading = false;
   }
+}
+
+async function resolveFFmpegAssetUrls() {
+  if (state.ffmpegAssetUrls) {
+    return state.ffmpegAssetUrls;
+  }
+
+  const coreJsUrl = `${FFMPEG_CORE_BASE_URL}/ffmpeg-core.js`;
+  const coreWasmUrl = `${FFMPEG_CORE_BASE_URL}/ffmpeg-core.wasm`;
+  const coreWorkerUrl = `${FFMPEG_CORE_BASE_URL}/ffmpeg-core.worker.js`;
+
+  const [coreURL, wasmURL, workerURL] = await Promise.all([
+    toBlobUrlSafe(coreJsUrl, "text/javascript"),
+    toBlobUrlSafe(coreWasmUrl, "application/wasm"),
+    toBlobUrlSafe(coreWorkerUrl, "text/javascript"),
+  ]);
+
+  state.ffmpegAssetUrls = { coreURL, wasmURL, workerURL };
+  return state.ffmpegAssetUrls;
+}
+
+async function toBlobUrlSafe(url, mimeType) {
+  const toBlobURL = window.FFmpegUtil?.toBlobURL;
+  if (typeof toBlobURL === "function") {
+    return toBlobURL(url, mimeType);
+  }
+
+  const response = await fetch(url, { mode: "cors", cache: "force-cache" });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch FFmpeg asset: ${url}`);
+  }
+  const sourceBlob = await response.blob();
+  const blob =
+    mimeType && sourceBlob.type !== mimeType ? new Blob([sourceBlob], { type: mimeType }) : sourceBlob;
+  return URL.createObjectURL(blob);
 }
 
 async function ffmpegWriteFile(ffmpeg, path, data) {
@@ -1721,6 +1759,13 @@ function formatBytes(bytes) {
 window.addEventListener("beforeunload", () => {
   if (state.sourceUrl) {
     URL.revokeObjectURL(state.sourceUrl);
+  }
+  if (state.ffmpegAssetUrls) {
+    Object.values(state.ffmpegAssetUrls).forEach((url) => {
+      if (typeof url === "string" && url.startsWith("blob:")) {
+        URL.revokeObjectURL(url);
+      }
+    });
   }
 });
 

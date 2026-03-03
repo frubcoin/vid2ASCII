@@ -40,6 +40,56 @@ main::before {
   transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, border-color 0.2s ease-out;
 }
 
+.brand-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.brand-logo,
+.hero-logo {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-primary) 78%, white 22%),
+    color-mix(in srgb, var(--color-secondary) 78%, white 22%)
+  );
+  -webkit-mask: url("../kaiwASCII logo.svg") center / contain no-repeat;
+  mask: url("../kaiwASCII logo.svg") center / contain no-repeat;
+  flex: 0 0 auto;
+  filter: drop-shadow(0 0 14px color-mix(in srgb, var(--color-primary) 34%, transparent));
+}
+
+.brand-logo {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.brand-wordmark {
+  font-family: "Space Grotesk", "DM Sans", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.hero-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.95rem;
+}
+
+.hero-logo {
+  width: clamp(2.4rem, 4.8vw, 3.4rem);
+  height: clamp(2.4rem, 4.8vw, 3.4rem);
+}
+
+.hero-wordmark {
+  font-family: "Space Grotesk", "DM Sans", sans-serif;
+  font-size: clamp(1.35rem, 2.7vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: color-mix(in srgb, var(--color-base-content) 92%, var(--color-primary) 8%);
+}
+
 .card:hover {
   border-color: color-mix(in srgb, var(--color-primary) 32%, var(--color-base-300));
   box-shadow: 0 12px 36px color-mix(in srgb, var(--color-base-content) 14%, transparent);
@@ -174,6 +224,10 @@ main::before {
     height: 440px;
     min-height: 440px;
     max-height: 440px;
+  }
+
+  .brand-wordmark {
+    font-size: 1rem;
   }
 }
 
