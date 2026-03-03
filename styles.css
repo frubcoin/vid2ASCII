@@ -48,6 +48,7 @@ main::before {
 
 .brand-logo,
 .hero-logo {
+  display: inline-block;
   background: linear-gradient(
     135deg,
     color-mix(in srgb, var(--color-primary) 78%, white 22%),
