@@ -7,9 +7,9 @@
 const ASCII_DENSITY =
   "@$B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
 const FRAME_DELIMITER = String.fromCharCode(30);
+const DEFAULT_COLOR_SMOOTHING = 0.34;
 const FFMPEG_UMD_URL = "https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.15/dist/umd/ffmpeg.js";
-const FFMPEG_CORE_URL =
-  "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd/ffmpeg-core.js";
+const FFMPEG_CORE_BASE_URL = "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd";
 const THEME_STORAGE_KEY = "ascii-gen-theme";
 const AVAILABLE_THEMES = [
   "night",
@@ -181,11 +181,19 @@ const elements = {
   fontAspectValue: document.getElementById("fontAspectValue"),
   enableColor: document.getElementById("enableColor"),
   colorMode: document.getElementById("colorMode"),
+  colorBrightness: document.getElementById("colorBrightness"),
+  colorBrightnessValue: document.getElementById("colorBrightnessValue"),
+  colorSaturation: document.getElementById("colorSaturation"),
+  colorSaturationValue: document.getElementById("colorSaturationValue"),
+  colorContrast: document.getElementById("colorContrast"),
+  colorContrastValue: document.getElementById("colorContrastValue"),
+  paletteSize: document.getElementById("paletteSize"),
+  paletteSizeValue: document.getElementById("paletteSizeValue"),
+  colorSmoothing: document.getElementById("colorSmoothing"),
+  colorSmoothingValue: document.getElementById("colorSmoothingValue"),
   enableGlow: document.getElementById("enableGlow"),
   autoPreview: document.getElementById("autoPreview"),
   themeSelect: document.getElementById("themeSelect"),
-  themeSelectMobile: document.getElementById("themeSelectMobile"),
-  themeChips: [...document.querySelectorAll("[data-theme-option]")],
   qualityButtons: [...document.querySelectorAll(".quality")],
   togglePreview: document.getElementById("togglePreview"),
   generateFrames: document.getElementById("generateFrames"),
@@ -218,12 +226,27 @@ const state = {
   fontAspectRatio: Number(elements.fontAspectRatio.value),
   enableColor: elements.enableColor.checked,
   colorMode: elements.colorMode.value,
+  colorBrightness: Number(elements.colorBrightness?.value || 1),
+  colorSaturation: Number(elements.colorSaturation?.value || 1),
+  colorContrast: Number(elements.colorContrast?.value || 1),
+  paletteSize: Number(elements.paletteSize?.value || 12),
+  colorSmoothingValue: Number(elements.colorSmoothing?.value || DEFAULT_COLOR_SMOOTHING),
   enableGlow: elements.enableGlow.checked,
   autoPreview: elements.autoPreview.checked,
   lastDimensions: { cols: 0, rows: 0 },
   ffmpegReady: false,
   ffmpegLoading: false,
   ffmpeg: null,
+  ffmpegApi: null,
+  colorSmoothingCache: { live: null, export: null },
+  livePalette: null,
+  captureTick: 0,
+  buffers: {
+    pixelCount: 0,
+    luminance: null,
+    edges: null,
+    colorSample: null,
+  },
   theme: "night",
 };
 
@@ -239,6 +262,19 @@ function init() {
   bindRange(elements.gamma, elements.gammaValue, (v) => Number(v).toFixed(1));
   bindRange(elements.fontAspectRatio, elements.fontAspectValue, (v) =>
     Number(v).toFixed(1)
+  );
+  bindRange(elements.colorBrightness, elements.colorBrightnessValue, (v) =>
+    Number(v).toFixed(2)
+  );
+  bindRange(elements.colorSaturation, elements.colorSaturationValue, (v) =>
+    Number(v).toFixed(2)
+  );
+  bindRange(elements.colorContrast, elements.colorContrastValue, (v) =>
+    Number(v).toFixed(2)
+  );
+  bindRange(elements.paletteSize, elements.paletteSizeValue, (v) => Number(v).toString());
+  bindRange(elements.colorSmoothing, elements.colorSmoothingValue, (v) =>
+    Number(v).toFixed(2)
   );
 
   elements.videoInput.addEventListener("change", onSourceSelected);
@@ -256,13 +292,6 @@ function init() {
   window.addEventListener("resize", updatePreviewScale, { passive: true });
   elements.themeSelect?.addEventListener("change", onThemeChanged);
   elements.themeSelect?.addEventListener("input", onThemeChanged);
-  elements.themeSelectMobile?.addEventListener("change", onThemeChanged);
-  elements.themeSelectMobile?.addEventListener("input", onThemeChanged);
-  elements.themeChips.forEach((chip) => {
-    chip.addEventListener("click", () => {
-      applyTheme(chip.dataset.themeOption || "");
-    });
-  });
 
   elements.qualityButtons.forEach((button) => {
     button.addEventListener("click", () => setQuality(button.dataset.quality));
@@ -307,13 +336,6 @@ function applyTheme(themeName) {
   if (elements.themeSelect) {
     elements.themeSelect.value = theme;
   }
-  if (elements.themeSelectMobile) {
-    elements.themeSelectMobile.value = theme;
-  }
-
-  elements.themeChips.forEach((chip) => {
-    chip.classList.toggle("active", chip.dataset.themeOption === theme);
-  });
 
   if (state.videoReady) {
     applyPreviewStyle(null, !!elements.asciiPreview.innerHTML);
@@ -328,11 +350,25 @@ function applyFallbackThemeVars(theme) {
 }
 
 function bindRange(input, output, formatter) {
+  if (!input || !output) return;
   const sync = () => {
     output.value = formatter(input.value);
-    state[input.id === "fontAspectRatio" ? "fontAspectRatio" : input.id] = Number(
-      input.value
-    );
+    const stateKeyMap = {
+      fontAspectRatio: "fontAspectRatio",
+      colorSmoothing: "colorSmoothingValue",
+    };
+    const stateKey = stateKeyMap[input.id] || input.id;
+    state[stateKey] = Number(input.value);
+    if (
+      input.id === "colorBrightness" ||
+      input.id === "colorSaturation" ||
+      input.id === "colorContrast" ||
+      input.id === "paletteSize" ||
+      input.id === "colorSmoothing"
+    ) {
+      resetColorSmoothing("live");
+      resetLivePreviewCaches();
+    }
     if (input.id === "fps" && state.previewRunning) {
       restartPreviewLoop();
     }
@@ -348,9 +384,21 @@ function bindRange(input, output, formatter) {
 function syncVisualOptions() {
   state.enableColor = elements.enableColor.checked;
   state.colorMode = elements.colorMode.value;
+  state.colorBrightness = Number(elements.colorBrightness?.value || 1);
+  state.colorSaturation = Number(elements.colorSaturation?.value || 1);
+  state.colorContrast = Number(elements.colorContrast?.value || 1);
+  state.paletteSize = Number(elements.paletteSize?.value || 12);
+  state.colorSmoothingValue = Number(elements.colorSmoothing?.value || DEFAULT_COLOR_SMOOTHING);
   state.enableGlow = elements.enableGlow.checked;
+  resetColorSmoothing();
+  resetLivePreviewCaches();
   elements.colorMode.disabled = !state.enableColor;
   elements.colorMode.classList.toggle("select-disabled", !state.enableColor);
+  if (elements.colorBrightness) elements.colorBrightness.disabled = !state.enableColor;
+  if (elements.colorSaturation) elements.colorSaturation.disabled = !state.enableColor;
+  if (elements.colorContrast) elements.colorContrast.disabled = !state.enableColor;
+  if (elements.paletteSize) elements.paletteSize.disabled = !state.enableColor;
+  if (elements.colorSmoothing) elements.colorSmoothing.disabled = !state.enableColor;
 
   applyPreviewStyle(null);
   if (state.videoReady && !state.processing) {
@@ -407,6 +455,7 @@ function toShadowColor(color, alpha) {
 function setQuality(quality) {
   if (!quality || state.quality === quality) return;
   state.quality = quality;
+  resetLivePreviewCaches();
   elements.qualityButtons.forEach((button) => {
     const active = button.dataset.quality === quality;
     button.classList.toggle("active", active);
@@ -459,6 +508,8 @@ async function onSourceSelected() {
   if (!file) return;
 
   stopPreview();
+  resetColorSmoothing();
+  resetLivePreviewCaches();
   setProgress(0);
   state.frames = [];
   state.colorFrames = [];
@@ -523,9 +574,9 @@ async function convertUnsupportedVideo(file) {
   const inputName = `${safeBase}.${extension || "bin"}`;
   const outputName = `${safeBase}.compat.mp4`;
 
-  ffmpeg.FS("writeFile", inputName, new Uint8Array(await file.arrayBuffer()));
+  await ffmpegWriteFile(ffmpeg, inputName, new Uint8Array(await file.arrayBuffer()));
   try {
-    await ffmpeg.run(
+    await ffmpegRun(ffmpeg, [
       "-i",
       inputName,
       "-vf",
@@ -537,10 +588,10 @@ async function convertUnsupportedVideo(file) {
       "-movflags",
       "faststart",
       "-an",
-      outputName
-    );
+      outputName,
+    ]);
   } catch {
-    await ffmpeg.run(
+    await ffmpegRun(ffmpeg, [
       "-i",
       inputName,
       "-vf",
@@ -548,17 +599,12 @@ async function convertUnsupportedVideo(file) {
       "-pix_fmt",
       "yuv420p",
       "-an",
-      outputName
-    );
+      outputName,
+    ]);
   }
 
-  const output = ffmpeg.FS("readFile", outputName);
-  try {
-    ffmpeg.FS("unlink", inputName);
-    ffmpeg.FS("unlink", outputName);
-  } catch {
-    // Best effort cleanup.
-  }
+  const output = await ffmpegReadFile(ffmpeg, outputName);
+  await Promise.allSettled([ffmpegDeleteFile(ffmpeg, inputName), ffmpegDeleteFile(ffmpeg, outputName)]);
 
   if (!output || !output.length) {
     throw new Error("Transcoder produced an empty output.");
@@ -584,19 +630,74 @@ async function ensureFFmpegLoaded() {
   try {
     await loadScriptOnce(FFMPEG_UMD_URL);
     const createFFmpeg = window.FFmpeg?.createFFmpeg;
-    if (!createFFmpeg) {
-      throw new Error("FFmpeg loader unavailable.");
+    if (createFFmpeg) {
+      const ffmpeg = createFFmpeg({
+        log: false,
+        corePath: `${FFMPEG_CORE_BASE_URL}/ffmpeg-core.js`,
+      });
+      await ffmpeg.load();
+      state.ffmpeg = ffmpeg;
+      state.ffmpegApi = "legacy";
+      state.ffmpegReady = true;
+      return ffmpeg;
     }
-    const ffmpeg = createFFmpeg({
-      log: false,
-      corePath: FFMPEG_CORE_URL,
-    });
-    await ffmpeg.load();
-    state.ffmpeg = ffmpeg;
-    state.ffmpegReady = true;
-    return ffmpeg;
+
+    const FFmpegClass = window.FFmpegWASM?.FFmpeg;
+    if (FFmpegClass) {
+      const ffmpeg = new FFmpegClass();
+      await ffmpeg.load({
+        coreURL: `${FFMPEG_CORE_BASE_URL}/ffmpeg-core.js`,
+        wasmURL: `${FFMPEG_CORE_BASE_URL}/ffmpeg-core.wasm`,
+      });
+      state.ffmpeg = ffmpeg;
+      state.ffmpegApi = "modern";
+      state.ffmpegReady = true;
+      return ffmpeg;
+    }
+
+    throw new Error("FFmpeg loader unavailable.");
   } finally {
     state.ffmpegLoading = false;
+  }
+}
+
+async function ffmpegWriteFile(ffmpeg, path, data) {
+  if (state.ffmpegApi === "modern") {
+    await ffmpeg.writeFile(path, data);
+    return;
+  }
+  ffmpeg.FS("writeFile", path, data);
+}
+
+async function ffmpegRun(ffmpeg, args) {
+  if (state.ffmpegApi === "modern") {
+    const code = await ffmpeg.exec(args);
+    if (code !== 0) {
+      throw new Error(`ffmpeg exited with code ${code}`);
+    }
+    return;
+  }
+  await ffmpeg.run(...args);
+}
+
+async function ffmpegReadFile(ffmpeg, path) {
+  if (state.ffmpegApi === "modern") {
+    const data = await ffmpeg.readFile(path);
+    if (data instanceof Uint8Array) return data;
+    return new Uint8Array(data);
+  }
+  return ffmpeg.FS("readFile", path);
+}
+
+async function ffmpegDeleteFile(ffmpeg, path) {
+  try {
+    if (state.ffmpegApi === "modern") {
+      await ffmpeg.deleteFile(path);
+      return;
+    }
+    ffmpeg.FS("unlink", path);
+  } catch {
+    // Best effort cleanup.
   }
 }
 
@@ -746,6 +847,8 @@ function restartPreviewLoop() {
 }
 
 function renderCurrentFrame() {
+  const previousCols = state.lastDimensions.cols;
+  const previousRows = state.lastDimensions.rows;
   const frame = captureFrameAsAscii();
   if (!frame) return;
   if (frame.colorHtml) {
@@ -755,7 +858,9 @@ function renderCurrentFrame() {
     elements.asciiPreview.textContent = frame.ascii;
     applyPreviewStyle(frame.color, false);
   }
-  updatePreviewScale();
+  if (frame.cols !== previousCols || frame.rows !== previousRows) {
+    updatePreviewScale();
+  }
   elements.emptyState.style.display = "none";
 }
 
@@ -799,9 +904,14 @@ function captureFrameAsAscii(options = {}) {
   const cols = getColumns();
   const rows = getRows();
   if (!cols || !rows) return null;
+  const captureTick = state.captureTick++;
 
-  elements.frameCanvas.width = cols;
-  elements.frameCanvas.height = rows;
+  if (elements.frameCanvas.width !== cols) {
+    elements.frameCanvas.width = cols;
+  }
+  if (elements.frameCanvas.height !== rows) {
+    elements.frameCanvas.height = rows;
+  }
   frameCtx.drawImage(elements.sourceVideo, 0, 0, cols, rows);
   const { data } = frameCtx.getImageData(0, 0, cols, rows);
 
@@ -811,7 +921,8 @@ function captureFrameAsAscii(options = {}) {
   let ascii = "";
   let asciiFlat = "";
   const pixelCount = cols * rows;
-  const luminance = new Float32Array(pixelCount);
+  const buffers = ensureFrameBuffers(pixelCount);
+  const luminance = buffers.luminance;
 
   for (let p = 0, i = 0; p < pixelCount; p += 1, i += 4) {
     const red = data[i];
@@ -820,7 +931,7 @@ function captureFrameAsAscii(options = {}) {
     luminance[p] = (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255;
   }
 
-  const edges = new Float32Array(pixelCount);
+  const edges = buffers.edges;
   for (let y = 0; y < rows; y += 1) {
     const rowOffset = y * cols;
     for (let x = 0; x < cols; x += 1) {
@@ -852,15 +963,32 @@ function captureFrameAsAscii(options = {}) {
   }
 
   state.lastDimensions = { cols, rows };
-  elements.dimensions.textContent = `${cols} x ${rows} chars`;
+  const dimensionLabel = `${cols} x ${rows} chars`;
+  if (elements.dimensions.textContent !== dimensionLabel) {
+    elements.dimensions.textContent = dimensionLabel;
+  }
 
   let color = null;
   let colorFrame = null;
   let colorHtml = null;
   if (state.enableColor) {
     if (state.colorMode === "avg") {
-      const palette = buildAdaptivePalette(data, 12);
-      const colorIndexes = mapPixelsToPalette(data, palette, pixelCount);
+      const adjustedColorData = buildColorSampleData(data);
+      const paletteSize = Math.max(2, Math.round(state.paletteSize || 12));
+      let palette = null;
+      if (options.forExport) {
+        palette = stabilizePalette(buildAdaptivePalette(adjustedColorData, paletteSize), true);
+      } else {
+        const refreshEvery = getLivePaletteRefreshInterval();
+        if (!state.livePalette || captureTick % refreshEvery === 0) {
+          state.livePalette = stabilizePalette(
+            buildAdaptivePalette(adjustedColorData, paletteSize),
+            false
+          );
+        }
+        palette = state.livePalette;
+      }
+      const colorIndexes = mapPixelsToPalette(adjustedColorData, palette, pixelCount);
       colorFrame = buildColorFrameData(palette, colorIndexes);
       colorHtml = buildColorHtml(asciiFlat, cols, colorFrame);
     } else if (state.colorMode === "gradient") {
@@ -873,7 +1001,7 @@ function captureFrameAsAscii(options = {}) {
     }
   }
 
-  return { ascii, color, colorHtml, colorFrame };
+  return { ascii, color, colorHtml, colorFrame, cols, rows };
 }
 
 function clamp01(value) {
@@ -918,6 +1046,180 @@ function buildAdaptivePalette(pixelData, maxColors) {
     palette.push([245, 245, 245]);
   }
   return palette;
+}
+
+function resetColorSmoothing(scope) {
+  if (!scope || scope === "live") {
+    state.colorSmoothingCache.live = null;
+  }
+  if (!scope || scope === "export") {
+    state.colorSmoothingCache.export = null;
+  }
+}
+
+function resetLivePreviewCaches() {
+  state.livePalette = null;
+  state.captureTick = 0;
+}
+
+function ensureFrameBuffers(pixelCount) {
+  if (state.buffers.pixelCount !== pixelCount) {
+    state.buffers.pixelCount = pixelCount;
+    state.buffers.luminance = new Float32Array(pixelCount);
+    state.buffers.edges = new Float32Array(pixelCount);
+    state.buffers.colorSample = new Uint8ClampedArray(pixelCount * 4);
+    resetLivePreviewCaches();
+  }
+  return state.buffers;
+}
+
+function getLivePaletteRefreshInterval() {
+  if (state.quality === "high") return 3;
+  if (state.quality === "medium") return 2;
+  return 1;
+}
+
+function stabilizePalette(palette, forExport) {
+  const key = forExport ? "export" : "live";
+  const sorted = sortPaletteStable(palette);
+  const previous = state.colorSmoothingCache[key];
+  if (!previous || !previous.length) {
+    state.colorSmoothingCache[key] = sorted.map((color) => color.slice());
+    return sorted;
+  }
+
+  const aligned = alignPaletteToPrevious(sorted, previous);
+  const blended = aligned.map((color, index) => {
+    const prev = previous[index] || color;
+    return blendColor(
+      prev,
+      color,
+      clamp01(Number(state.colorSmoothingValue) || DEFAULT_COLOR_SMOOTHING)
+    );
+  });
+  state.colorSmoothingCache[key] = blended.map((color) => color.slice());
+  return blended;
+}
+
+function sortPaletteStable(palette) {
+  return [...palette].sort((a, b) => {
+    const lumA = 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
+    const lumB = 0.2126 * b[0] + 0.7152 * b[1] + 0.0722 * b[2];
+    if (Math.abs(lumA - lumB) > 3) return lumA - lumB;
+    return computeHue(a) - computeHue(b);
+  });
+}
+
+function alignPaletteToPrevious(current, previous) {
+  const used = new Set();
+  const aligned = [];
+
+  for (let i = 0; i < previous.length && aligned.length < current.length; i += 1) {
+    const prev = previous[i];
+    let bestIndex = -1;
+    let bestDistance = Number.POSITIVE_INFINITY;
+    for (let j = 0; j < current.length; j += 1) {
+      if (used.has(j)) continue;
+      const distance = colorDistanceSq(prev, current[j]);
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        bestIndex = j;
+      }
+    }
+    if (bestIndex >= 0) {
+      used.add(bestIndex);
+      aligned.push(current[bestIndex]);
+    }
+  }
+
+  for (let i = 0; i < current.length; i += 1) {
+    if (!used.has(i)) {
+      aligned.push(current[i]);
+    }
+  }
+  return aligned;
+}
+
+function blendColor(previous, current, alpha) {
+  const inv = 1 - alpha;
+  return [
+    Math.round(previous[0] * inv + current[0] * alpha),
+    Math.round(previous[1] * inv + current[1] * alpha),
+    Math.round(previous[2] * inv + current[2] * alpha),
+  ];
+}
+
+function colorDistanceSq(a, b) {
+  const dr = a[0] - b[0];
+  const dg = a[1] - b[1];
+  const db = a[2] - b[2];
+  return dr * dr + dg * dg + db * db;
+}
+
+function computeHue(color) {
+  const red = color[0] / 255;
+  const green = color[1] / 255;
+  const blue = color[2] / 255;
+  const max = Math.max(red, green, blue);
+  const min = Math.min(red, green, blue);
+  const delta = max - min;
+  if (delta === 0) return 0;
+  let hue = 0;
+  if (max === red) {
+    hue = ((green - blue) / delta) % 6;
+  } else if (max === green) {
+    hue = (blue - red) / delta + 2;
+  } else {
+    hue = (red - green) / delta + 4;
+  }
+  return ((hue * 60) + 360) % 360;
+}
+
+function buildColorSampleData(pixelData) {
+  const brightness = Math.max(0.25, Math.min(2.2, Number(state.colorBrightness) || 1));
+  const saturation = Math.max(0, Math.min(2.5, Number(state.colorSaturation) || 1));
+  const contrast = Math.max(0.4, Math.min(2.2, Number(state.colorContrast) || 1));
+  if (
+    Math.abs(brightness - 1) < 0.001 &&
+    Math.abs(saturation - 1) < 0.001 &&
+    Math.abs(contrast - 1) < 0.001
+  ) {
+    return pixelData;
+  }
+  const tuned = ensureFrameBuffers(Math.max(1, Math.floor(pixelData.length / 4))).colorSample;
+
+  for (let i = 0; i < pixelData.length; i += 4) {
+    const alpha = pixelData[i + 3];
+    let red = pixelData[i];
+    let green = pixelData[i + 1];
+    let blue = pixelData[i + 2];
+
+    red = (red - 128) * contrast + 128;
+    green = (green - 128) * contrast + 128;
+    blue = (blue - 128) * contrast + 128;
+
+    const gray = 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+    red = gray + (red - gray) * saturation;
+    green = gray + (green - gray) * saturation;
+    blue = gray + (blue - gray) * saturation;
+
+    red *= brightness;
+    green *= brightness;
+    blue *= brightness;
+
+    tuned[i] = clamp8(red);
+    tuned[i + 1] = clamp8(green);
+    tuned[i + 2] = clamp8(blue);
+    tuned[i + 3] = alpha;
+  }
+
+  return tuned;
+}
+
+function clamp8(value) {
+  if (value < 0) return 0;
+  if (value > 255) return 255;
+  return Math.round(value);
 }
 
 function mapPixelsToPalette(pixelData, palette, pixelCount) {
@@ -1044,6 +1346,7 @@ async function onGenerateFrames() {
   toggleEditorDisabled(true);
 
   try {
+    resetColorSmoothing("export");
     const video = elements.sourceVideo;
     const fps = Math.max(1, state.fps);
     const duration = video.duration;
@@ -1174,6 +1477,13 @@ function buildPayload() {
       enabled: state.enableColor,
       mode: colorMode,
       glow: state.enableGlow,
+      tuning: {
+        brightness: state.colorBrightness,
+        saturation: state.colorSaturation,
+        contrast: state.colorContrast,
+        paletteSize: state.paletteSize,
+        smoothing: state.colorSmoothingValue,
+      },
       frames: includeFrameColors ? state.colorFrames : [],
     },
     frames: state.frames,
@@ -1382,6 +1692,11 @@ function toggleEditorDisabled(disabled) {
   elements.fontAspectRatio.disabled = disabled;
   elements.enableColor.disabled = disabled;
   elements.colorMode.disabled = disabled || !elements.enableColor.checked;
+  if (elements.colorBrightness) elements.colorBrightness.disabled = disabled || !elements.enableColor.checked;
+  if (elements.colorSaturation) elements.colorSaturation.disabled = disabled || !elements.enableColor.checked;
+  if (elements.colorContrast) elements.colorContrast.disabled = disabled || !elements.enableColor.checked;
+  if (elements.paletteSize) elements.paletteSize.disabled = disabled || !elements.enableColor.checked;
+  if (elements.colorSmoothing) elements.colorSmoothing.disabled = disabled || !elements.enableColor.checked;
   elements.enableGlow.disabled = disabled;
   elements.autoPreview.disabled = disabled;
   elements.generateFrames.disabled = disabled;

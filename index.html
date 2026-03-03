@@ -26,9 +26,8 @@
           <a href="#" class="btn btn-ghost text-lg font-semibold">ASCII Gen</a>
         </div>
         <div class="hidden gap-2 md:flex">
-          <a href="#animations" class="btn btn-ghost btn-sm">Animations</a>
-          <a href="#how-it-works" class="btn btn-ghost btn-sm">How It Works</a>
-          <a href="#faq" class="btn btn-ghost btn-sm">FAQ</a>
+          <a href="#editor" class="btn btn-ghost btn-sm">Editor</a>
+          <a href="#embed" class="btn btn-ghost btn-sm">Embed</a>
         </div>
         <div class="ml-2 flex items-center gap-2">
           <label class="hidden items-center gap-2 lg:flex">
@@ -46,47 +45,9 @@
               <option value="lofi">Lofi</option>
             </select>
           </label>
-          <a href="#cta" class="btn btn-primary btn-sm">Get Access $9.99</a>
+          <a href="#editor" class="btn btn-primary btn-sm">Open Editor</a>
         </div>
       </nav>
-
-      <section class="theme-studio card border border-base-300 bg-base-100/80 shadow-xl backdrop-blur">
-        <div class="card-body gap-3 py-4">
-          <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h2 class="text-base font-semibold">Theme Studio</h2>
-              <p class="text-sm opacity-70">Pick from 10 curated themes for your workspace.</p>
-            </div>
-            <label class="flex items-center gap-2 lg:hidden">
-              <span class="text-sm opacity-70">Theme</span>
-              <select id="themeSelectMobile" class="select select-sm select-bordered">
-                <option value="night">Night</option>
-                <option value="dracula">Dracula</option>
-                <option value="synthwave">Synthwave</option>
-                <option value="nord">Nord</option>
-                <option value="forest">Forest</option>
-                <option value="luxury">Luxury</option>
-                <option value="corporate">Corporate</option>
-                <option value="cupcake">Cupcake</option>
-                <option value="sunset">Sunset</option>
-                <option value="lofi">Lofi</option>
-              </select>
-            </label>
-          </div>
-          <div class="theme-grid">
-            <button type="button" class="theme-chip" data-theme-option="night">Night</button>
-            <button type="button" class="theme-chip" data-theme-option="dracula">Dracula</button>
-            <button type="button" class="theme-chip" data-theme-option="synthwave">Synthwave</button>
-            <button type="button" class="theme-chip" data-theme-option="nord">Nord</button>
-            <button type="button" class="theme-chip" data-theme-option="forest">Forest</button>
-            <button type="button" class="theme-chip" data-theme-option="luxury">Luxury</button>
-            <button type="button" class="theme-chip" data-theme-option="corporate">Corporate</button>
-            <button type="button" class="theme-chip" data-theme-option="cupcake">Cupcake</button>
-            <button type="button" class="theme-chip" data-theme-option="sunset">Sunset</button>
-            <button type="button" class="theme-chip" data-theme-option="lofi">Lofi</button>
-          </div>
-        </div>
-      </section>
 
       <header class="hero rounded-box border border-base-300 bg-base-100 shadow-xl">
         <div class="hero-content w-full px-4 py-8 md:px-8">
@@ -101,18 +62,14 @@
                 one-click export.
               </p>
               <ul class="grid gap-2 text-sm md:text-base">
-                <li class="feature-line">Drop-in React component</li>
-                <li class="feature-line">CLI tool to convert videos to ASCII</li>
-                <li class="feature-line">Growing animation library</li>
-                <li class="feature-line">Private Discord for support</li>
+                <li class="feature-line">Local video to ASCII conversion in-browser</li>
+                <li class="feature-line">Live looping preview with quality controls</li>
+                <li class="feature-line">Optional color output and tuning</li>
+                <li class="feature-line">Export as Embed HTML, JSON, or iframe snippet</li>
               </ul>
               <div class="mt-5 flex flex-wrap gap-2">
-                <a href="#cta" class="btn btn-primary btn-sm md:btn-md">Get Access $9.99</a>
-                <a href="#animations" class="btn btn-outline btn-sm md:btn-md">View Animations</a>
+                <a href="#editor" class="btn btn-primary btn-sm md:btn-md">Start Converting</a>
               </div>
-              <p class="mt-3 text-sm opacity-70">
-                One-time payment. Lifetime access. Free updates. Private Discord.
-              </p>
             </div>
 
             <div class="ascii-hero-preview rounded-box border border-base-300 bg-base-300/30 p-4">
@@ -127,8 +84,8 @@
    '-.____.-'
               </pre>
               <div class="mt-2 flex flex-wrap gap-2">
-                <span class="badge badge-primary badge-soft">React</span>
-                <span class="badge badge-secondary badge-soft">CLI</span>
+                <span class="badge badge-primary badge-soft">Browser</span>
+                <span class="badge badge-secondary badge-soft">Color</span>
                 <span class="badge badge-accent badge-soft">Embeddable</span>
               </div>
             </div>
@@ -143,7 +100,6 @@
             Real-time preview, powerful controls, and instant export. Runs 100% locally for
             maximum performance and privacy.
           </p>
-          <p class="text-sm text-base-content/70">Includes <code>ascii.sh</code> for terminal power users.</p>
         </div>
       </section>
 
@@ -269,6 +225,88 @@
                   <input id="enableGlow" type="checkbox" class="toggle toggle-accent" checked />
                 </label>
               </div>
+
+              <div class="divider my-0"></div>
+
+              <label class="form-control w-full">
+                <div class="label py-1">
+                  <span class="label-text">Color Brightness</span>
+                  <output id="colorBrightnessValue" for="colorBrightness" class="label-text-alt">1.00</output>
+                </div>
+                <input
+                  id="colorBrightness"
+                  type="range"
+                  min="0.4"
+                  max="1.8"
+                  step="0.01"
+                  value="1.00"
+                  class="range range-primary"
+                />
+              </label>
+
+              <label class="form-control w-full">
+                <div class="label py-1">
+                  <span class="label-text">Color Saturation</span>
+                  <output id="colorSaturationValue" for="colorSaturation" class="label-text-alt">1.00</output>
+                </div>
+                <input
+                  id="colorSaturation"
+                  type="range"
+                  min="0.00"
+                  max="2.00"
+                  step="0.01"
+                  value="1.00"
+                  class="range range-primary"
+                />
+              </label>
+
+              <label class="form-control w-full">
+                <div class="label py-1">
+                  <span class="label-text">Color Contrast</span>
+                  <output id="colorContrastValue" for="colorContrast" class="label-text-alt">1.00</output>
+                </div>
+                <input
+                  id="colorContrast"
+                  type="range"
+                  min="0.60"
+                  max="1.80"
+                  step="0.01"
+                  value="1.00"
+                  class="range range-primary"
+                />
+              </label>
+
+              <label class="form-control w-full">
+                <div class="label py-1">
+                  <span class="label-text">Palette Size</span>
+                  <output id="paletteSizeValue" for="paletteSize" class="label-text-alt">12</output>
+                </div>
+                <input
+                  id="paletteSize"
+                  type="range"
+                  min="4"
+                  max="24"
+                  step="1"
+                  value="12"
+                  class="range range-primary"
+                />
+              </label>
+
+              <label class="form-control w-full">
+                <div class="label py-1">
+                  <span class="label-text">Temporal Smoothing</span>
+                  <output id="colorSmoothingValue" for="colorSmoothing" class="label-text-alt">0.34</output>
+                </div>
+                <input
+                  id="colorSmoothing"
+                  type="range"
+                  min="0.00"
+                  max="0.90"
+                  step="0.01"
+                  value="0.34"
+                  class="range range-primary"
+                />
+              </label>
             </div>
 
             <div class="divider my-0"></div>
@@ -340,7 +378,7 @@
         </section>
       </section>
 
-      <section class="card border border-base-300 bg-base-100 shadow-xl">
+      <section id="embed" class="card border border-base-300 bg-base-100 shadow-xl">
         <div class="card-body p-0">
           <div class="border-b border-base-300 px-4 py-3">
             <h2 class="card-title text-base">Embeddable Snippet</h2>
@@ -356,76 +394,34 @@
 
       <section class="card border border-base-300 bg-base-100 shadow-xl">
         <div class="card-body">
-          <h2 class="card-title text-2xl">Everything You Need</h2>
+          <h2 class="card-title text-2xl">Current Capabilities</h2>
           <p class="text-base-content/80">
-            A complete toolkit for adding ASCII art animations to React projects and beyond.
+            This build focuses on the in-browser editor and embed export workflow.
           </p>
           <div class="grid gap-3 md:grid-cols-2">
             <article class="feature-card">
-              <h3 class="font-semibold">React Component</h3>
+              <h3 class="font-semibold">Video Input + Fallback Transcoding</h3>
               <p class="text-sm opacity-75">
-                Drop-in player with quality selection, FPS controls, and reduced-motion support.
+                Supports common formats and attempts compatibility transcode when browser decode fails.
               </p>
             </article>
             <article class="feature-card">
               <h3 class="font-semibold">Live Editor</h3>
               <p class="text-sm opacity-75">
-                Drag and drop videos, tune visual settings, and preview output instantly.
+                Tune FPS, threshold, gamma, aspect ratio, quality, color modes, and color fine tuning.
               </p>
             </article>
             <article class="feature-card">
-              <h3 class="font-semibold">Animation Library</h3>
+              <h3 class="font-semibold">Looping Preview</h3>
               <p class="text-sm opacity-75">
-                Pre-made animations in low, medium, and high tiers with ongoing additions.
+                Auto-looping preview and screen-fit rendering for desktop and mobile.
               </p>
             </article>
             <article class="feature-card">
-              <h3 class="font-semibold">Private Discord</h3>
+              <h3 class="font-semibold">Export Options</h3>
               <p class="text-sm opacity-75">
-                Creator community for support, feedback, and sharing new ASCII work.
+                Download Embed HTML, JSON frame data, or copy iframe snippet for websites.
               </p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section id="animations" class="card border border-base-300 bg-base-100 shadow-xl">
-        <div class="card-body">
-          <h2 class="card-title text-2xl">Animation Library</h2>
-          <p class="text-base-content/80">
-            Pre-made ASCII animations ready to drop into your project. 11 included, 2 coming soon.
-          </p>
-          <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <article class="lib-card"><h3>Planet</h3><p>200 frames</p><span>L M H</span></article>
-            <article class="lib-card"><h3>Cube</h3><p>134 frames</p><span>L M H</span></article>
-            <article class="lib-card"><h3>Computer</h3><p>78 frames</p><span>L M H</span></article>
-            <article class="lib-card"><h3>Rocket</h3><p>80 frames</p><span>L M H</span></article>
-            <article class="lib-card"><h3>Wave</h3><p>300 frames</p><span>L M H</span></article>
-            <article class="lib-card"><h3>Coin</h3><p>37 frames</p><span>L M H</span></article>
-            <article class="lib-card"><h3>Cat</h3><p>16 frames</p><span>L M H</span></article>
-            <article class="lib-card coming"><h3>Spaceship</h3><p>Coming soon</p><span>{ }</span></article>
-          </div>
-        </div>
-      </section>
-
-      <section id="how-it-works" class="card border border-base-300 bg-base-100 shadow-xl">
-        <div class="card-body">
-          <h2 class="card-title text-2xl">How It Works</h2>
-          <div class="grid gap-3 md:grid-cols-3">
-            <article class="step-card">
-              <span>01</span>
-              <h3>Purchase</h3>
-              <p>One-time payment. No subscription, no recurring fees.</p>
-            </article>
-            <article class="step-card">
-              <span>02</span>
-              <h3>Get Full Access</h3>
-              <p>Private GitHub access plus community support in Discord.</p>
-            </article>
-            <article class="step-card">
-              <span>03</span>
-              <h3>Create and Export</h3>
-              <p>Use the local editor or CLI to convert videos into embeddable ASCII.</p>
             </article>
           </div>
         </div>
@@ -453,22 +449,9 @@
               <input type="radio" name="faq-accordion" />
               <div class="collapse-title font-medium">Does it support reduced motion?</div>
               <div class="collapse-content text-sm opacity-80">
-                Yes. Exported embeds and preview runtime respect <code>prefers-reduced-motion</code>.
+                The runtime can support reduced motion, but this build currently plays embeds by default.
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="cta" class="card border border-primary/40 bg-base-100 shadow-xl">
-        <div class="card-body items-center text-center">
-          <h2 class="card-title text-2xl">Ready to Add ASCII Gen?</h2>
-          <p class="max-w-2xl text-base-content/80">
-            Get the React component, live editor workflow, embeddable exports, and ongoing animation updates.
-          </p>
-          <div class="flex flex-wrap justify-center gap-2">
-            <button class="btn btn-primary">Get Access $9.99</button>
-            <button class="btn btn-outline">View Animations</button>
           </div>
         </div>
       </section>
