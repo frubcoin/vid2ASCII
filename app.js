@@ -9,7 +9,7 @@ const ASCII_DENSITY =
 const FRAME_DELIMITER = String.fromCharCode(30);
 const DEFAULT_COLOR_SMOOTHING = 0.34;
 const FFMPEG_UMD_URL = "https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.15/dist/umd/ffmpeg.js";
-const FFMPEG_UTIL_UMD_URL = "https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.2/dist/umd/index.js";
+const FFMPEG_UTIL_UMD_URL = "https://cdn.jsdelivr.net/npm/@ffmpeg/util@0.12.1/dist/umd/index.js";
 const FFMPEG_CORE_BASE_URL = "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd";
 const THEME_STORAGE_KEY = "ascii-gen-theme";
 const AVAILABLE_THEMES = [
@@ -671,15 +671,13 @@ async function resolveFFmpegAssetUrls() {
 
   const coreJsUrl = `${FFMPEG_CORE_BASE_URL}/ffmpeg-core.js`;
   const coreWasmUrl = `${FFMPEG_CORE_BASE_URL}/ffmpeg-core.wasm`;
-  const coreWorkerUrl = `${FFMPEG_CORE_BASE_URL}/ffmpeg-core.worker.js`;
 
-  const [coreURL, wasmURL, workerURL] = await Promise.all([
+  const [coreURL, wasmURL] = await Promise.all([
     toBlobUrlSafe(coreJsUrl, "text/javascript"),
     toBlobUrlSafe(coreWasmUrl, "application/wasm"),
-    toBlobUrlSafe(coreWorkerUrl, "text/javascript"),
   ]);
 
-  state.ffmpegAssetUrls = { coreURL, wasmURL, workerURL };
+  state.ffmpegAssetUrls = { coreURL, wasmURL };
   return state.ffmpegAssetUrls;
 }
 

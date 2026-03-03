@@ -54,8 +54,8 @@ main::before {
     color-mix(in srgb, var(--color-primary) 78%, white 22%),
     color-mix(in srgb, var(--color-secondary) 78%, white 22%)
   );
-  -webkit-mask: url("../kaiwASCII logo.svg") center / contain no-repeat;
-  mask: url("../kaiwASCII logo.svg") center / contain no-repeat;
+  -webkit-mask: url("./kaiwASCII-logo.svg") center / contain no-repeat;
+  mask: url("./kaiwASCII-logo.svg") center / contain no-repeat;
   flex: 0 0 auto;
   filter: drop-shadow(0 0 14px color-mix(in srgb, var(--color-primary) 34%, transparent));
 }
