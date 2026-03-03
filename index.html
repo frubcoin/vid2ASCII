@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -20,20 +20,19 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body data-theme="night" class="min-h-screen bg-base-200 text-base-content">
-    <main class="mx-auto flex w-full max-w-[1280px] flex-col gap-4 p-4 lg:p-8">
-      <nav class="navbar rounded-box border border-base-300 bg-base-100/85 px-4 shadow-xl backdrop-blur">
+    <main class="landing-shell mx-auto flex w-full max-w-[1180px] flex-col gap-6 p-4 lg:p-8">
+      <nav class="navbar rounded-box border border-base-300 bg-base-100/85 px-4 shadow-xl backdrop-blur landing-nav">
         <div class="flex-1">
-          <a href="#" class="btn btn-ghost h-auto px-2 brand-lockup">
+          <a
+            href="./index.html"
+            class="btn btn-ghost h-auto px-2 brand-lockup"
+            aria-label="KaiwASCII home"
+          >
             <span class="brand-logo" aria-hidden="true"></span>
-            <span class="brand-wordmark">KaiwASCII</span>
           </a>
         </div>
-        <div class="hidden gap-2 md:flex">
-          <a href="#editor" class="btn btn-ghost btn-sm">Editor</a>
-          <a href="#embed" class="btn btn-ghost btn-sm">Embed</a>
-        </div>
         <div class="ml-2 flex items-center gap-2">
-          <label class="hidden items-center gap-2 lg:flex">
+          <label class="flex items-center gap-2">
             <span class="text-sm opacity-70">Theme</span>
             <select id="themeSelect" class="select select-sm select-bordered">
               <option value="night">Night</option>
@@ -48,409 +47,180 @@
               <option value="lofi">Lofi</option>
             </select>
           </label>
-          <a href="#editor" class="btn btn-primary btn-sm">Open Editor</a>
+          <a href="./editor.html" class="btn btn-primary btn-sm">Open Editor</a>
         </div>
       </nav>
 
-      <header class="hero rounded-box border border-base-300 bg-base-100 shadow-xl">
-        <div class="hero-content w-full px-4 py-8 md:px-8">
-          <div class="grid w-full items-center gap-8">
-            <div class="max-w-2xl">
-              <div class="badge badge-primary badge-outline">Runs fully in your browser</div>
-              <div class="hero-brand mt-4">
-                <span class="hero-logo" aria-hidden="true"></span>
-                <span class="hero-wordmark">KaiwASCII</span>
+      <section class="landing-hero rounded-box border border-base-300 bg-base-100 shadow-xl">
+        <span class="hero-orb hero-orb-a" aria-hidden="true"></span>
+        <span class="hero-orb hero-orb-b" aria-hidden="true"></span>
+        <div class="landing-hero-grid">
+          <article class="landing-copy reveal-up">
+            <div class="hero-logo-shell" aria-hidden="true">
+              <div id="heroLogoInline" class="hero-logo-inline"></div>
+            </div>
+            <div class="badge badge-primary badge-outline">Local-first ASCII video conversion</div>
+            <h1 class="landing-title">Build cinematic ASCII loops from any video in minutes.</h1>
+            <p class="landing-subtitle">
+              Tune frame rate, detail, palette, and export options in a production-ready editor.
+              Everything runs in your browser with zero uploads.
+            </p>
+            <div class="landing-actions">
+              <a href="./editor.html" class="btn btn-primary">Open Editor</a>
+              <a href="#workflow" class="btn btn-outline">See Workflow</a>
+            </div>
+            <div class="landing-stats">
+              <div class="stat-chip reveal-up" style="--delay: 0.05s">
+                <strong>100%</strong>
+                <span>Browser Local</span>
               </div>
-              <h1 class="mt-3 text-4xl font-bold md:text-5xl">
-                Add mesmerizing ASCII art animations to any website.
-              </h1>
-              <p class="py-4 text-base-content/80">
-                Convert videos to lightweight, embeddable ASCII players with live controls and
-                one-click export.
-              </p>
-              <ul class="grid gap-2 text-sm md:text-base">
-                <li class="feature-line">Local video to ASCII conversion in-browser</li>
-                <li class="feature-line">Live looping preview with quality controls</li>
-                <li class="feature-line">Optional color output and tuning</li>
-                <li class="feature-line">Export as Embed HTML, JSON, or iframe snippet</li>
-              </ul>
-              <div class="mt-5 flex flex-wrap gap-2">
-                <a href="#editor" class="btn btn-primary btn-sm md:btn-md">Start Converting</a>
+              <div class="stat-chip reveal-up" style="--delay: 0.1s">
+                <strong>3</strong>
+                <span>Quality Levels</span>
+              </div>
+              <div class="stat-chip reveal-up" style="--delay: 0.15s">
+                <strong>3</strong>
+                <span>Export Formats</span>
               </div>
             </div>
+          </article>
 
-          </div>
-        </div>
-      </header>
-
-      <section id="editor" class="card border border-base-300 bg-base-100 shadow-xl">
-        <div class="card-body">
-          <h2 class="card-title text-2xl">KaiwASCII Editor</h2>
-          <p class="text-base-content/80">
-            Real-time preview, powerful controls, and instant export. Runs 100% locally for
-            maximum performance and privacy.
-          </p>
-        </div>
-      </section>
-
-      <section class="grid gap-4 lg:grid-cols-[370px_1fr]" aria-label="ASCII editor workspace">
-        <aside class="card border border-base-300 bg-base-100 shadow-xl">
-          <div class="card-body gap-4">
-            <h2 class="card-title">Configuration</h2>
-
-            <label class="form-control w-full">
-              <div class="label">
-                <span class="label-text">Source</span>
+          <aside class="landing-showcase reveal-up" style="--delay: 0.1s">
+            <div class="ascii-window">
+              <div class="ascii-header">
+                <span></span><span></span><span></span>
+                <p>kaiwASCII.live.preview</p>
               </div>
-              <input
-                id="videoInput"
-                type="file"
-                accept="video/*,.mp4,.mov,.m4v,.webm,.mkv,.avi,.wmv,.flv,.3gp,.ogv,.ts,.m2ts,.mts,.vob"
-                class="file-input file-input-bordered"
-              />
-              <div class="label">
-                <span class="label-text-alt" id="sourceHint">Select a local video file.</span>
-              </div>
-            </label>
-
-            <label class="form-control w-full">
-              <div class="label">
-                <span class="label-text">Animation Name</span>
-              </div>
-              <input
-                id="animationName"
-                type="text"
-                value="animation"
-                maxlength="64"
-                class="input input-bordered"
-              />
-              <div class="label">
-                <span class="label-text-alt">
-                  Will be saved as <code id="savePath">./animations/animation</code>
-                </span>
-              </div>
-            </label>
-
-            <div class="divider my-0"></div>
-
-            <label class="form-control w-full">
-              <div class="label">
-                <span class="label-text">FPS</span>
-                <output id="fpsValue" for="fps" class="label-text-alt">15</output>
-              </div>
-              <input id="fps" type="range" min="1" max="30" step="1" value="15" class="range range-primary" />
-            </label>
-
-            <div class="grid gap-4 sm:grid-cols-2">
-              <label class="form-control w-full">
-                <div class="label">
-                  <span class="label-text">Threshold</span>
-                  <output id="thresholdValue" for="threshold" class="label-text-alt">188</output>
-                </div>
-                <input
-                  id="threshold"
-                  type="range"
-                  min="0"
-                  max="255"
-                  step="1"
-                  value="188"
-                  class="range range-primary"
-                />
-              </label>
-
-              <label class="form-control w-full">
-                <div class="label">
-                  <span class="label-text">Gamma</span>
-                  <output id="gammaValue" for="gamma" class="label-text-alt">2.0</output>
-                </div>
-                <input
-                  id="gamma"
-                  type="range"
-                  min="0.2"
-                  max="3"
-                  step="0.1"
-                  value="2.0"
-                  class="range range-primary"
-                />
-              </label>
+              <pre aria-hidden="true">@@@@@@@###***++===--..
+@@@@@@###***+++==--..
+@@@###***+++==--..    
+###***+++==--..       
+***+++==--..   ..--==+
+++==--..   ..--==++***
+==--..   ..--==++***##
+--..   ..--==++***###@
+..   ..--==++***###@@@
+</pre>
             </div>
-
-            <label class="form-control w-full">
-              <div class="label">
-                <span class="label-text">Font Aspect Ratio</span>
-                <output id="fontAspectValue" for="fontAspectRatio" class="label-text-alt">2.0</output>
-              </div>
-              <input
-                id="fontAspectRatio"
-                type="range"
-                min="0.8"
-                max="3.2"
-                step="0.1"
-                value="2.0"
-                class="range range-primary"
-              />
-            </label>
-
-            <div class="grid gap-3 rounded-box border border-base-300 bg-base-200/40 p-3">
-              <div class="form-control">
-                <label class="label cursor-pointer py-1">
-                  <span class="label-text">Enable Color Output</span>
-                  <input id="enableColor" type="checkbox" class="toggle toggle-primary" />
-                </label>
-              </div>
-
-              <label class="form-control">
-                <div class="label py-1">
-                  <span class="label-text">Color Style</span>
-                </div>
-                <select id="colorMode" class="select select-bordered select-sm">
-                  <option value="avg" selected>Source Palette (Detailed)</option>
-                  <option value="gradient">Neon Cycle</option>
-                </select>
-              </label>
-
-              <div class="form-control">
-                <label class="label cursor-pointer py-1">
-                  <span class="label-text">Glow</span>
-                  <input id="enableGlow" type="checkbox" class="toggle toggle-accent" checked />
-                </label>
-              </div>
-
-              <div class="divider my-0"></div>
-
-              <label class="form-control w-full">
-                <div class="label py-1">
-                  <span class="label-text">Color Brightness</span>
-                  <output id="colorBrightnessValue" for="colorBrightness" class="label-text-alt">1.00</output>
-                </div>
-                <input
-                  id="colorBrightness"
-                  type="range"
-                  min="0.4"
-                  max="1.8"
-                  step="0.01"
-                  value="1.00"
-                  class="range range-primary"
-                />
-              </label>
-
-              <label class="form-control w-full">
-                <div class="label py-1">
-                  <span class="label-text">Color Saturation</span>
-                  <output id="colorSaturationValue" for="colorSaturation" class="label-text-alt">1.00</output>
-                </div>
-                <input
-                  id="colorSaturation"
-                  type="range"
-                  min="0.00"
-                  max="2.00"
-                  step="0.01"
-                  value="1.00"
-                  class="range range-primary"
-                />
-              </label>
-
-              <label class="form-control w-full">
-                <div class="label py-1">
-                  <span class="label-text">Color Contrast</span>
-                  <output id="colorContrastValue" for="colorContrast" class="label-text-alt">1.00</output>
-                </div>
-                <input
-                  id="colorContrast"
-                  type="range"
-                  min="0.60"
-                  max="1.80"
-                  step="0.01"
-                  value="1.00"
-                  class="range range-primary"
-                />
-              </label>
-
-              <label class="form-control w-full">
-                <div class="label py-1">
-                  <span class="label-text">Palette Size</span>
-                  <output id="paletteSizeValue" for="paletteSize" class="label-text-alt">12</output>
-                </div>
-                <input
-                  id="paletteSize"
-                  type="range"
-                  min="4"
-                  max="24"
-                  step="1"
-                  value="12"
-                  class="range range-primary"
-                />
-              </label>
-
-              <label class="form-control w-full">
-                <div class="label py-1">
-                  <span class="label-text">Temporal Smoothing</span>
-                  <output id="colorSmoothingValue" for="colorSmoothing" class="label-text-alt">0.34</output>
-                </div>
-                <input
-                  id="colorSmoothing"
-                  type="range"
-                  min="0.00"
-                  max="0.90"
-                  step="0.01"
-                  value="0.34"
-                  class="range range-primary"
-                />
-              </label>
-            </div>
-
-            <div class="divider my-0"></div>
-
-            <div class="form-control">
-              <div class="label">
-                <span class="label-text">Quality Levels</span>
-              </div>
-              <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                <button
-                  class="quality btn btn-outline btn-sm justify-start active"
-                  data-quality="low"
-                  role="radio"
-                  aria-checked="true"
-                >
-                  Low <span class="opacity-60">80 col</span>
-                </button>
-                <button
-                  class="quality btn btn-outline btn-sm justify-start"
-                  data-quality="medium"
-                  role="radio"
-                  aria-checked="false"
-                >
-                  Medium <span class="opacity-60">160 col</span>
-                </button>
-                <button
-                  class="quality btn btn-outline btn-sm justify-start"
-                  data-quality="high"
-                  role="radio"
-                  aria-checked="false"
-                >
-                  High <span class="opacity-60">240 col</span>
-                </button>
-              </div>
-            </div>
-
-            <div class="grid gap-2 pt-2">
-              <div class="form-control rounded-box border border-base-300 bg-base-200/40 p-2">
-                <label class="label cursor-pointer py-1">
-                  <span class="label-text">Auto Preview Loop</span>
-                  <input id="autoPreview" type="checkbox" class="toggle toggle-secondary" checked />
-                </label>
-              </div>
-              <button id="togglePreview" class="btn btn-outline">Start Preview</button>
-              <button id="generateFrames" class="btn btn-primary">Generate Frames</button>
-              <button id="downloadEmbed" class="btn btn-outline" disabled>Download Embed HTML</button>
-              <button id="downloadJson" class="btn btn-outline" disabled>Download JSON</button>
-              <button id="copySnippet" class="btn btn-outline" disabled>Copy Embed Snippet</button>
-            </div>
-
-            <div class="space-y-2 pt-1">
-              <p id="statusText" class="text-sm opacity-80">Load a video to begin.</p>
-              <progress id="progressBar" class="progress progress-primary w-full" value="0" max="100"></progress>
-            </div>
-          </div>
-        </aside>
-
-        <section class="card border border-base-300 bg-base-100 shadow-xl">
-          <div class="card-body p-0">
-            <div class="flex items-center justify-between border-b border-base-300 px-4 py-3">
-              <h2 class="card-title text-base">Preview</h2>
-              <p id="dimensions" class="text-xs opacity-70">-</p>
-            </div>
-            <div class="preview-wrap">
-              <pre id="asciiPreview" aria-live="polite"></pre>
-              <p id="emptyState">Preview will appear here once a video is loaded.</p>
-            </div>
-          </div>
-        </section>
-      </section>
-
-      <section id="embed" class="card border border-base-300 bg-base-100 shadow-xl">
-        <div class="card-body p-0">
-          <div class="border-b border-base-300 px-4 py-3">
-            <h2 class="card-title text-base">Embeddable Snippet</h2>
-          </div>
-          <textarea
-            id="embedCode"
-            readonly
-            class="textarea h-52 w-full rounded-none border-0 bg-base-300/40 font-mono text-xs"
-            placeholder="Generate frames, then copy or download the embeddable ASCII player."
-          ></textarea>
+            <div class="floating-note note-a">Palette-aware color frames</div>
+            <div class="floating-note note-b">Export embed + JSON + snippet</div>
+          </aside>
         </div>
       </section>
 
-      <section class="card border border-base-300 bg-base-100 shadow-xl">
-        <div class="card-body">
-          <h2 class="card-title text-2xl">Current Capabilities</h2>
-          <p class="text-base-content/80">
-            This build focuses on the in-browser editor and embed export workflow.
-          </p>
-          <div class="grid gap-3 md:grid-cols-2">
-            <article class="feature-card">
-              <h3 class="font-semibold">Video Input + Fallback Transcoding</h3>
-              <p class="text-sm opacity-75">
-                Supports common formats and attempts compatibility transcode when browser decode fails.
-              </p>
-            </article>
-            <article class="feature-card">
-              <h3 class="font-semibold">Live Editor</h3>
-              <p class="text-sm opacity-75">
-                Tune FPS, threshold, gamma, aspect ratio, quality, color modes, and color fine tuning.
-              </p>
-            </article>
-            <article class="feature-card">
-              <h3 class="font-semibold">Looping Preview</h3>
-              <p class="text-sm opacity-75">
-                Auto-looping preview and screen-fit rendering for desktop and mobile.
-              </p>
-            </article>
-            <article class="feature-card">
-              <h3 class="font-semibold">Export Options</h3>
-              <p class="text-sm opacity-75">
-                Download Embed HTML, JSON frame data, or copy iframe snippet for websites.
-              </p>
-            </article>
-          </div>
+      <section class="ticker-wrap rounded-box border border-base-300 bg-base-100/70">
+        <div class="ticker-track" aria-hidden="true">
+          <span>VIDEO -> ASCII</span>
+          <span>PALETTE TUNING</span>
+          <span>LIVE PREVIEW</span>
+          <span>EMBED EXPORT</span>
+          <span>VIDEO -> ASCII</span>
+          <span>PALETTE TUNING</span>
+          <span>LIVE PREVIEW</span>
+          <span>EMBED EXPORT</span>
         </div>
       </section>
 
-      <section id="faq" class="card border border-base-300 bg-base-100 shadow-xl">
-        <div class="card-body">
-          <h2 class="card-title text-2xl">Frequently Asked Questions</h2>
-          <div class="space-y-2">
-            <div class="collapse collapse-plus border border-base-300 bg-base-200/50">
-              <input type="radio" name="faq-accordion" checked />
-              <div class="collapse-title font-medium">Can I generate my own animations?</div>
-              <div class="collapse-content text-sm opacity-80">
-                Yes. Upload a local video in the editor, tweak settings, and export instantly.
-              </div>
-            </div>
-            <div class="collapse collapse-plus border border-base-300 bg-base-200/50">
-              <input type="radio" name="faq-accordion" />
-              <div class="collapse-title font-medium">What are the quality levels?</div>
-              <div class="collapse-content text-sm opacity-80">
-                Low (80 cols), Medium (160 cols), and High (240 cols). Choose based on file size and sharpness.
-              </div>
-            </div>
-            <div class="collapse collapse-plus border border-base-300 bg-base-200/50">
-              <input type="radio" name="faq-accordion" />
-              <div class="collapse-title font-medium">Does it support reduced motion?</div>
-              <div class="collapse-content text-sm opacity-80">
-                The runtime can support reduced motion, but this build currently plays embeds by default.
-              </div>
-            </div>
-          </div>
+      <section id="workflow" class="grid gap-4 md:grid-cols-3">
+        <article class="feature-card reveal-up" style="--delay: 0.05s">
+          <p class="feature-kicker">01</p>
+          <h2 class="font-semibold text-lg">Drop your video</h2>
+          <p class="text-sm opacity-75">Load local footage instantly with compatibility fallback handling.</p>
+        </article>
+        <article class="feature-card reveal-up" style="--delay: 0.1s">
+          <p class="feature-kicker">02</p>
+          <h2 class="font-semibold text-lg">Dial in style</h2>
+          <p class="text-sm opacity-75">Tune threshold, gamma, quality, and frame colors until it looks right.</p>
+        </article>
+        <article class="feature-card reveal-up" style="--delay: 0.15s">
+          <p class="feature-kicker">03</p>
+          <h2 class="font-semibold text-lg">Ship anywhere</h2>
+          <p class="text-sm opacity-75">Export standalone HTML, JSON data, or an embeddable iframe snippet.</p>
+        </article>
+      </section>
+
+      <section class="landing-cta rounded-box border border-base-300 bg-base-100 shadow-xl reveal-up" style="--delay: 0.2s">
+        <div>
+          <p class="badge badge-secondary badge-outline">Ready to render?</p>
+          <h2 class="text-2xl font-bold mt-2">Turn your next clip into ASCII motion graphics.</h2>
         </div>
+        <a href="./editor.html" class="btn btn-primary">Launch Editor</a>
       </section>
     </main>
 
-    <video id="sourceVideo" muted playsinline preload="auto"></video>
-    <canvas id="frameCanvas" aria-hidden="true"></canvas>
+    <script>
+      (function () {
+        const THEME_KEY = "ascii-gen-theme";
+        const select = document.getElementById("themeSelect");
+        if (!select) return;
 
-    <script src="./app.js" defer></script>
+        let savedTheme = null;
+        try {
+          savedTheme = localStorage.getItem(THEME_KEY);
+        } catch {}
+
+        const theme = savedTheme || document.body.getAttribute("data-theme") || "night";
+        document.body.setAttribute("data-theme", theme);
+        select.value = theme;
+
+        const lightLikeThemes = new Set(["corporate", "cupcake", "lofi"]);
+        document.documentElement.style.colorScheme = lightLikeThemes.has(theme) ? "light" : "dark";
+
+        const mountAnimatedLogo = async () => {
+          const mount = document.getElementById("heroLogoInline");
+          if (!mount) return;
+          try {
+            const response = await fetch("./kaiwASCII-logo-wide.svg", { cache: "no-cache" });
+            if (!response.ok) return;
+            const raw = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(raw, "image/svg+xml");
+            const svg = doc.querySelector("svg");
+            if (!svg) return;
+
+            svg.classList.add("logo-draw-svg");
+            svg.removeAttribute("width");
+            svg.removeAttribute("height");
+
+            const paths = [...svg.querySelectorAll("path")];
+            paths.forEach((path, index) => {
+              path.classList.add(`svg-elem-${index + 1}`);
+            });
+
+            mount.replaceChildren(svg);
+
+            const reduceMotion =
+              window.matchMedia &&
+              window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+            if (reduceMotion) {
+              svg.classList.add("active");
+              return;
+            }
+
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                svg.classList.add("active");
+              });
+            });
+          } catch {
+            // Keep layout stable if SVG injection fails.
+          }
+        };
+
+        mountAnimatedLogo();
+
+        select.addEventListener("change", (event) => {
+          const nextTheme = event.target.value || "night";
+          document.body.setAttribute("data-theme", nextTheme);
+          document.documentElement.style.colorScheme = lightLikeThemes.has(nextTheme)
+            ? "light"
+            : "dark";
+          try {
+            localStorage.setItem(THEME_KEY, nextTheme);
+          } catch {}
+        });
+      })();
+    </script>
   </body>
 </html>
-

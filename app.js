@@ -6,6 +6,12 @@
 
 const ASCII_DENSITY =
   "@$B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
+
+const CHAR_SETS = {
+  classic: "@$B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ",
+  blocks: "\u2588\u2593\u2592\u2591 ",
+  minimal: "@#%+=-:. ",
+};
 const FRAME_DELIMITER = String.fromCharCode(30);
 const DEFAULT_COLOR_SMOOTHING = 0.34;
 const FFMPEG_UMD_URL = "https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.15/dist/umd/ffmpeg.js";
@@ -192,7 +198,23 @@ const elements = {
   paletteSizeValue: document.getElementById("paletteSizeValue"),
   colorSmoothing: document.getElementById("colorSmoothing"),
   colorSmoothingValue: document.getElementById("colorSmoothingValue"),
-  enableGlow: document.getElementById("enableGlow"),
+  // Background
+  enableTransparentBg: document.getElementById("enableTransparentBg"),
+  bgLumCutoff: document.getElementById("bgLumCutoff"),
+  bgLumCutoffValue: document.getElementById("bgLumCutoffValue"),
+  enableBgRemove: document.getElementById("enableBgRemove"),
+  bgKeyColor: document.getElementById("bgKeyColor"),
+  bgTolerance: document.getElementById("bgTolerance"),
+  bgToleranceValue: document.getElementById("bgToleranceValue"),
+  // Rendering
+  charSet: document.getElementById("charSet"),
+  charSetCustomWrap: document.getElementById("charSetCustomWrap"),
+  charSetCustom: document.getElementById("charSetCustom"),
+  invertMode: document.getElementById("invertMode"),
+  edgeWeight: document.getElementById("edgeWeight"),
+  edgeWeightValue: document.getElementById("edgeWeightValue"),
+  previewBgColor: document.getElementById("previewBgColor"),
+  // Misc
   autoPreview: document.getElementById("autoPreview"),
   themeSelect: document.getElementById("themeSelect"),
   qualityButtons: [...document.querySelectorAll(".quality")],
@@ -232,7 +254,19 @@ const state = {
   colorContrast: Number(elements.colorContrast?.value || 1),
   paletteSize: Number(elements.paletteSize?.value || 12),
   colorSmoothingValue: Number(elements.colorSmoothing?.value || DEFAULT_COLOR_SMOOTHING),
-  enableGlow: elements.enableGlow.checked,
+  // Background
+  enableTransparentBg: false,
+  bgLumCutoff: 220,
+  enableBgRemove: false,
+  bgKeyColor: "#00ff00",
+  bgTolerance: 40,
+  // Rendering
+  charSet: "classic",
+  charSetCustom: "@#%+=:-. ",
+  invertMode: false,
+  edgeWeight: 0.36,
+  previewBgColor: "#000000",
+  // Misc
   autoPreview: elements.autoPreview.checked,
   lastDimensions: { cols: 0, rows: 0 },
   ffmpegReady: false,
@@ -278,6 +312,9 @@ function init() {
   bindRange(elements.colorSmoothing, elements.colorSmoothingValue, (v) =>
     Number(v).toFixed(2)
   );
+  bindRange(elements.bgLumCutoff, elements.bgLumCutoffValue, (v) => Number(v).toString());
+  bindRange(elements.bgTolerance, elements.bgToleranceValue, (v) => Number(v).toString());
+  bindRange(elements.edgeWeight, elements.edgeWeightValue, (v) => Number(v).toFixed(2));
 
   elements.videoInput.addEventListener("change", onSourceSelected);
   elements.animationName.addEventListener("input", updateSavePath);
@@ -288,19 +325,34 @@ function init() {
   elements.copySnippet.addEventListener("click", onCopySnippet);
   elements.enableColor.addEventListener("change", syncVisualOptions);
   elements.colorMode.addEventListener("change", syncVisualOptions);
-  elements.enableGlow.addEventListener("change", syncVisualOptions);
   elements.autoPreview.addEventListener("change", syncAutoPreview);
   elements.sourceVideo.addEventListener("ended", handlePreviewEnded);
   window.addEventListener("resize", updatePreviewScale, { passive: true });
   elements.themeSelect?.addEventListener("change", onThemeChanged);
   elements.themeSelect?.addEventListener("input", onThemeChanged);
 
+  // Background controls
+  elements.enableTransparentBg?.addEventListener("change", syncBgOptions);
+  elements.bgLumCutoff?.addEventListener("input", syncBgOptions);
+  elements.enableBgRemove?.addEventListener("change", syncBgOptions);
+  elements.bgKeyColor?.addEventListener("input", syncBgOptions);
+  elements.bgTolerance?.addEventListener("input", syncBgOptions);
+
+  // Rendering controls
+  elements.charSet?.addEventListener("change", syncRenderingOptions);
+  elements.charSetCustom?.addEventListener("input", syncRenderingOptions);
+  elements.invertMode?.addEventListener("change", syncRenderingOptions);
+  elements.previewBgColor?.addEventListener("input", applyPreviewBgColor);
+
   elements.qualityButtons.forEach((button) => {
     button.addEventListener("click", () => setQuality(button.dataset.quality));
   });
 
   syncVisualOptions();
+  syncBgOptions();
+  syncRenderingOptions();
   syncAutoPreview();
+  applyPreviewBgColor();
 }
 
 function initTheme() {
@@ -391,7 +443,6 @@ function syncVisualOptions() {
   state.colorContrast = Number(elements.colorContrast?.value || 1);
   state.paletteSize = Number(elements.paletteSize?.value || 12);
   state.colorSmoothingValue = Number(elements.colorSmoothing?.value || DEFAULT_COLOR_SMOOTHING);
-  state.enableGlow = elements.enableGlow.checked;
   resetColorSmoothing();
   resetLivePreviewCaches();
   elements.colorMode.disabled = !state.enableColor;
@@ -406,6 +457,41 @@ function syncVisualOptions() {
   if (state.videoReady && !state.processing) {
     renderCurrentFrame();
   }
+}
+
+function syncBgOptions() {
+  state.enableTransparentBg = elements.enableTransparentBg?.checked ?? false;
+  state.bgLumCutoff = Number(elements.bgLumCutoff?.value ?? 220);
+  state.enableBgRemove = elements.enableBgRemove?.checked ?? false;
+  state.bgKeyColor = elements.bgKeyColor?.value ?? "#00ff00";
+  state.bgTolerance = Number(elements.bgTolerance?.value ?? 40);
+
+  if (elements.bgLumCutoff) elements.bgLumCutoff.disabled = !state.enableTransparentBg;
+  if (elements.bgKeyColor) elements.bgKeyColor.disabled = !state.enableBgRemove;
+  if (elements.bgTolerance) elements.bgTolerance.disabled = !state.enableBgRemove;
+
+  if (state.videoReady && !state.processing) renderCurrentFrame();
+}
+
+function syncRenderingOptions() {
+  state.charSet = elements.charSet?.value ?? "classic";
+  state.charSetCustom = elements.charSetCustom?.value || "@#%+=:-. ";
+  state.invertMode = elements.invertMode?.checked ?? false;
+  state.edgeWeight = Number(elements.edgeWeight?.value ?? 0.36);
+
+  const isCustom = state.charSet === "custom";
+  if (elements.charSetCustomWrap) {
+    elements.charSetCustomWrap.classList.toggle("hidden", !isCustom);
+  }
+
+  if (state.videoReady && !state.processing) renderCurrentFrame();
+}
+
+function applyPreviewBgColor() {
+  const color = elements.previewBgColor?.value ?? "#000000";
+  state.previewBgColor = color;
+  const wrap = elements.asciiPreview?.parentElement;
+  if (wrap) wrap.style.backgroundColor = color;
 }
 
 function syncAutoPreview() {
@@ -427,31 +513,13 @@ function handlePreviewEnded() {
 
 function applyPreviewStyle(color, hasInlineColors = false) {
   const baseColor = getThemeColor("--color-base-content", "#f5f5f5");
-  elements.asciiPreview.style.color = color || baseColor;
-  elements.asciiPreview.style.textShadow = state.enableGlow
-    ? hasInlineColors
-      ? `0 0 12px ${toShadowColor(baseColor, 0.24)}`
-      : `0 0 8px ${toShadowColor(baseColor, 0.14)}`
-    : "none";
+  elements.asciiPreview.style.color = hasInlineColors ? baseColor : color || baseColor;
+  elements.asciiPreview.style.textShadow = "none";
 }
 
 function getThemeColor(token, fallback) {
   const value = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
   return value || fallback;
-}
-
-function toShadowColor(color, alpha) {
-  if (color.startsWith("#")) {
-    const hex = color.slice(1);
-    const full = hex.length === 3 ? hex.split("").map((c) => c + c).join("") : hex;
-    const red = parseInt(full.slice(0, 2), 16);
-    const green = parseInt(full.slice(2, 4), 16);
-    const blue = parseInt(full.slice(4, 6), 16);
-    if (Number.isFinite(red) && Number.isFinite(green) && Number.isFinite(blue)) {
-      return `rgb(${red} ${green} ${blue} / ${alpha})`;
-    }
-  }
-  return `rgb(255 255 255 / ${alpha})`;
 }
 
 function setQuality(quality) {
@@ -953,20 +1021,54 @@ function captureFrameAsAscii(options = {}) {
 
   const threshold = state.threshold / 255;
   const gamma = Math.max(0.2, state.gamma);
-  const maxIndex = ASCII_DENSITY.length - 1;
-  let ascii = "";
-  let asciiFlat = "";
+  const edgeW = Math.max(0, Math.min(1, state.edgeWeight ?? 0.36));
+
+  // Resolve active character set
+  let density;
+  if (state.charSet === "custom") {
+    density = (state.charSetCustom || "").length >= 2 ? state.charSetCustom : ASCII_DENSITY;
+  } else {
+    density = CHAR_SETS[state.charSet] || ASCII_DENSITY;
+  }
+  const maxIndex = density.length - 1;
+
+  // Color-key BG removal: parse key color once
+  let keyR = 0, keyG = 255, keyB = 0;
+  let keyToleranceSqNorm = -1;
+  if (state.enableBgRemove && state.bgKeyColor) {
+    const hex = parseInt(state.bgKeyColor.slice(1), 16);
+    keyR = (hex >> 16) & 0xff;
+    keyG = (hex >> 8) & 0xff;
+    keyB = hex & 0xff;
+    const t = state.bgTolerance / 255;
+    keyToleranceSqNorm = t * t;
+  }
+
+  const bgLumThreshold = state.enableTransparentBg ? state.bgLumCutoff / 255 : 2;
+
   const pixelCount = cols * rows;
   const buffers = ensureFrameBuffers(pixelCount);
   const luminance = buffers.luminance;
 
+  // Luminance pass + optional color-key removal
   for (let p = 0, i = 0; p < pixelCount; p += 1, i += 4) {
     const red = data[i];
     const green = data[i + 1];
     const blue = data[i + 2];
-    luminance[p] = (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255;
+    let lum = (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255;
+
+    if (keyToleranceSqNorm >= 0) {
+      const dr = (red - keyR) / 255;
+      const dg = (green - keyG) / 255;
+      const db = (blue - keyB) / 255;
+      const distSq = dr * dr * 0.30 + dg * dg * 0.59 + db * db * 0.11;
+      if (distSq <= keyToleranceSqNorm) lum = 1;
+    }
+
+    luminance[p] = lum;
   }
 
+  // Edge detection
   const edges = buffers.edges;
   for (let y = 0; y < rows; y += 1) {
     const rowOffset = y * cols;
@@ -980,20 +1082,32 @@ function captureFrameAsAscii(options = {}) {
     }
   }
 
+  // Character mapping
+  let ascii = "";
+  let asciiFlat = "";
   for (let y = 0; y < rows; y += 1) {
     let line = "";
     const rowOffset = y * cols;
     for (let x = 0; x < cols; x += 1) {
       const p = rowOffset + x;
-      let light = luminance[p] * 0.82 + edges[p] * 0.36;
+      const lum = luminance[p];
+
+      // Transparent BG: bright pixels become spaces
+      if (lum >= bgLumThreshold) {
+        line += " ";
+        asciiFlat += " ";
+        continue;
+      }
+
+      let light = lum * 0.82 + edges[p] * edgeW;
       light = Math.pow(clamp01(light), 1 / gamma);
       light = (light - threshold) * 1.55 + 0.5;
       light = clamp01(light);
 
-      const charIndex = Math.max(0, Math.min(maxIndex, Math.floor((1 - light) * maxIndex)));
-      const character = ASCII_DENSITY[charIndex];
-      line += character;
-      asciiFlat += character;
+      let charIndex = Math.max(0, Math.min(maxIndex, Math.floor((1 - light) * maxIndex)));
+      if (state.invertMode) charIndex = maxIndex - charIndex;
+      line += density[charIndex];
+      asciiFlat += density[charIndex];
     }
     ascii += y === rows - 1 ? line : `${line}\n`;
   }
@@ -1418,7 +1532,7 @@ async function onGenerateFrames() {
         );
       }
 
-      if (index % 15 === 0) {
+      if (index % 8 === 0) {
         await nextFrame();
       }
     }
@@ -1509,10 +1623,23 @@ function buildPayload() {
     threshold: state.threshold,
     gamma: state.gamma,
     fontAspectRatio: state.fontAspectRatio,
+    rendering: {
+      charSet: state.charSet,
+      charSetCustom: state.charSet === "custom" ? state.charSetCustom : undefined,
+      invert: state.invertMode,
+      edgeWeight: state.edgeWeight,
+    },
+    bg: {
+      transparent: state.enableTransparentBg,
+      lumCutoff: state.bgLumCutoff,
+      removeColor: state.enableBgRemove,
+      keyColor: state.enableBgRemove ? state.bgKeyColor : undefined,
+      tolerance: state.enableBgRemove ? state.bgTolerance : undefined,
+    },
     color: {
       enabled: state.enableColor,
       mode: colorMode,
-      glow: state.enableGlow,
+      glow: false,
       tuning: {
         brightness: state.colorBrightness,
         saturation: state.colorSaturation,
@@ -1531,7 +1658,6 @@ function packEmbedData(payload, mode = "auto") {
   const frames = Array.isArray(payload.frames) ? payload.frames : [];
   const colorConfig = payload.color || {};
   const colorMode = colorConfig.enabled ? colorConfig.mode || "none" : "none";
-  const glow = colorConfig.glow !== false;
   const colorFrames =
     colorMode === "avg" && Array.isArray(colorConfig.frames) ? colorConfig.frames : null;
 
@@ -1552,7 +1678,7 @@ function packEmbedData(payload, mode = "auto") {
   const resolvedColorMode = hasDetailedColorFrames ? "palette" : colorMode;
   const extras = {
     cm: resolvedColorMode,
-    g: glow,
+    g: false,
     cw: Math.max(1, Number(payload.columns) || 0),
     ch: Math.max(1, Number(payload.rows) || 0),
   };
@@ -1623,7 +1749,7 @@ function packEmbedData(payload, mode = "auto") {
 function buildPlayerRuntimeScript(data, nodeExpression) {
   return `(function(){const d=${safeScriptJson(
     data
-  )};const n=${nodeExpression};if(!n)return;const rm=d.rm===true&&window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;const t=Math.max(16,Math.floor(1000/Math.max(1,Number(d.f)||12)));const m=d.cm||"none";const c=Array.isArray(d.c)?d.c:null;const cf=Array.isArray(d.cf)?d.cf:null;const w=Math.max(1,Number(d.w)||0);const cw=Math.max(1,Number(d.cw)||0);const ch=Math.max(1,Number(d.ch)||0);n.style.textShadow=d.g===false?"none":"0 0 8px rgb(255 255 255 / .16)";const fit=()=>{if(!cw||!ch)return;const s=getComputedStyle(n);const px=parseFloat(s.paddingLeft||"0")+parseFloat(s.paddingRight||"0");const py=parseFloat(s.paddingTop||"0")+parseFloat(s.paddingBottom||"0");const pw=(n.parentElement&&n.parentElement.clientWidth)||window.innerWidth;const ph=(n.parentElement&&n.parentElement.clientHeight)||window.innerHeight;const aw=Math.max(1,pw-px-2);const ah=Math.max(1,Math.min(window.innerHeight*.95,ph)-py-2);const fs=Math.max(2,Math.min(18,Math.min(aw/(cw*.61),ah/ch)));n.style.fontSize=fs.toFixed(2)+"px";n.style.lineHeight="1";n.style.width=cw+"ch";n.style.height=ch+"em";n.style.margin="0 auto";n.style.display="block";n.style.overflow="hidden";};fit();window.addEventListener("resize",fit,{passive:true});const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");const colorHtml=(ascii,meta)=>{if(!meta||!Array.isArray(meta.p)||!Array.isArray(meta.r))return null;const p=meta.p,r=meta.r;const flat=ascii.indexOf("\\n")===-1?ascii:ascii.replace(/\\n/g,"");let rp=0,rem=r[0]||0,rc=r[1]||0,active=-1,txt="",html="";const flush=()=>{if(!txt.length)return;const o=active*3;const red=p[o]??245,green=p[o+1]??245,blue=p[o+2]??245;html+='<span style="color:rgb('+red+','+green+','+blue+')">'+esc(txt)+"</span>";txt="";};for(let i=0;i<flat.length;i++){if(rem<=0){rp+=2;rem=r[rp]||1;rc=r[rp+1]||0;}if(active!==rc){flush();active=rc;}txt+=flat[i];rem-=1;if(w>0&&(i+1)%w===0){txt+="\\n";flush();active=-1;}}flush();return html;};const paint=(fi,total,ascii)=>{if(m==="palette"&&cf&&cf.length){const meta=cf[fi%cf.length];const html=colorHtml(ascii,meta);if(html!==null){n.innerHTML=html;fit();return;}}n.textContent=ascii;fit();if(m==="avg"&&c&&c.length){n.style.color=c[fi%c.length]||"currentColor";return;}if(m==="gradient"){const h=Math.round((fi/Math.max(1,total))*360)%360;n.style.color="hsl("+h+" 100% 72%)";return;}n.style.color="currentColor";};if(Array.isArray(d.a)){const a=d.a;if(!a.length){n.textContent="No frames found.";return;}const total=a.length;let i=0;paint(0,total,a[0]);if(rm)return;setInterval(function(){i=(i+1)%total;paint(i,total,a[i]);},t);return;}const u=typeof d.u==="string"&&d.u.length?d.u.split(String.fromCharCode(30)):[];if(Array.isArray(d.i)){const idx=d.i;if(!idx.length||!u.length){n.textContent="No frames found.";return;}const total=idx.length;let i=0;paint(0,total,u[idx[0]]||"");if(rm)return;setInterval(function(){i=(i+1)%total;paint(i,total,u[idx[i]]||"");},t);return;}if(Array.isArray(d.r)){const r=d.r;if(!r.length||!u.length){n.textContent="No frames found.";return;}const total=Math.max(1,r.reduce(function(s,v){return s+Math.max(1,((v&&v[0])|0));},0));let fi=0,ri=0,rc=Math.max(1,((r[0]&&r[0][0])|0)),rv=(r[0]&&r[0][1])|0;paint(0,total,u[rv]||"");if(rm)return;setInterval(function(){rc-=1;fi=(fi+1)%total;if(rc<=0){ri=(ri+1)%r.length;rc=Math.max(1,((r[ri]&&r[ri][0])|0));rv=(r[ri]&&r[ri][1])|0;}paint(fi,total,u[rv]||"");},t);return;}n.textContent="No frames found."})();`;
+  )};const n=${nodeExpression};if(!n)return;const rm=d.rm===true&&window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;const t=Math.max(16,Math.floor(1000/Math.max(1,Number(d.f)||12)));const m=d.cm||"none";const c=Array.isArray(d.c)?d.c:null;const cf=Array.isArray(d.cf)?d.cf:null;const w=Math.max(1,Number(d.w)||0);const cw=Math.max(1,Number(d.cw)||0);const ch=Math.max(1,Number(d.ch)||0);n.style.textShadow="none";const fit=()=>{if(!cw||!ch)return;const s=getComputedStyle(n);const px=parseFloat(s.paddingLeft||"0")+parseFloat(s.paddingRight||"0");const py=parseFloat(s.paddingTop||"0")+parseFloat(s.paddingBottom||"0");const pw=(n.parentElement&&n.parentElement.clientWidth)||window.innerWidth;const ph=(n.parentElement&&n.parentElement.clientHeight)||window.innerHeight;const aw=Math.max(1,pw-px-2);const ah=Math.max(1,Math.min(window.innerHeight*.95,ph)-py-2);const fs=Math.max(2,Math.min(18,Math.min(aw/(cw*.61),ah/ch)));n.style.fontSize=fs.toFixed(2)+"px";n.style.lineHeight="1";n.style.width=cw+"ch";n.style.height=ch+"em";n.style.margin="0 auto";n.style.display="block";n.style.overflow="hidden";};fit();window.addEventListener("resize",fit,{passive:true});const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");const colorHtml=(ascii,meta)=>{if(!meta||!Array.isArray(meta.p)||!Array.isArray(meta.r))return null;const p=meta.p,r=meta.r;const flat=ascii.indexOf("\\n")===-1?ascii:ascii.replace(/\\n/g,"");let rp=0,rem=r[0]||0,rc=r[1]||0,active=-1,txt="",html="";const flush=()=>{if(!txt.length)return;const o=active*3;const red=p[o]??245,green=p[o+1]??245,blue=p[o+2]??245;html+='<span style="color:rgb('+red+','+green+','+blue+')">'+esc(txt)+"</span>";txt="";};for(let i=0;i<flat.length;i++){if(rem<=0){rp+=2;rem=r[rp]||1;rc=r[rp+1]||0;}if(active!==rc){flush();active=rc;}txt+=flat[i];rem-=1;if(w>0&&(i+1)%w===0){txt+="\\n";flush();active=-1;}}flush();return html;};const paint=(fi,total,ascii)=>{if(m==="palette"&&cf&&cf.length){const meta=cf[fi%cf.length];const html=colorHtml(ascii,meta);if(html!==null){n.innerHTML=html;fit();return;}}n.textContent=ascii;fit();if(m==="avg"&&c&&c.length){n.style.color=c[fi%c.length]||"currentColor";return;}if(m==="gradient"){const h=Math.round((fi/Math.max(1,total))*360)%360;n.style.color="hsl("+h+" 100% 72%)";return;}n.style.color="currentColor";};if(Array.isArray(d.a)){const a=d.a;if(!a.length){n.textContent="No frames found.";return;}const total=a.length;let i=0;paint(0,total,a[0]);if(rm)return;setInterval(function(){i=(i+1)%total;paint(i,total,a[i]);},t);return;}const u=typeof d.u==="string"&&d.u.length?d.u.split(String.fromCharCode(30)):[];if(Array.isArray(d.i)){const idx=d.i;if(!idx.length||!u.length){n.textContent="No frames found.";return;}const total=idx.length;let i=0;paint(0,total,u[idx[0]]||"");if(rm)return;setInterval(function(){i=(i+1)%total;paint(i,total,u[idx[i]]||"");},t);return;}if(Array.isArray(d.r)){const r=d.r;if(!r.length||!u.length){n.textContent="No frames found.";return;}const total=Math.max(1,r.reduce(function(s,v){return s+Math.max(1,((v&&v[0])|0));},0));let fi=0,ri=0,rc=Math.max(1,((r[0]&&r[0][0])|0)),rv=(r[0]&&r[0][1])|0;paint(0,total,u[rv]||"");if(rm)return;setInterval(function(){rc-=1;fi=(fi+1)%total;if(rc<=0){ri=(ri+1)%r.length;rc=Math.max(1,((r[ri]&&r[ri][0])|0));rv=(r[ri]&&r[ri][1])|0;}paint(fi,total,u[rv]||"");},t);return;}n.textContent="No frames found."})();`;
 }
 
 function onDownloadEmbed() {
@@ -1733,7 +1859,18 @@ function toggleEditorDisabled(disabled) {
   if (elements.colorContrast) elements.colorContrast.disabled = disabled || !elements.enableColor.checked;
   if (elements.paletteSize) elements.paletteSize.disabled = disabled || !elements.enableColor.checked;
   if (elements.colorSmoothing) elements.colorSmoothing.disabled = disabled || !elements.enableColor.checked;
-  elements.enableGlow.disabled = disabled;
+  // Background controls
+  if (elements.enableTransparentBg) elements.enableTransparentBg.disabled = disabled;
+  if (elements.bgLumCutoff) elements.bgLumCutoff.disabled = disabled || !state.enableTransparentBg;
+  if (elements.enableBgRemove) elements.enableBgRemove.disabled = disabled;
+  if (elements.bgKeyColor) elements.bgKeyColor.disabled = disabled || !state.enableBgRemove;
+  if (elements.bgTolerance) elements.bgTolerance.disabled = disabled || !state.enableBgRemove;
+  // Rendering controls
+  if (elements.charSet) elements.charSet.disabled = disabled;
+  if (elements.charSetCustom) elements.charSetCustom.disabled = disabled;
+  if (elements.invertMode) elements.invertMode.disabled = disabled;
+  if (elements.edgeWeight) elements.edgeWeight.disabled = disabled;
+  if (elements.previewBgColor) elements.previewBgColor.disabled = disabled;
   elements.autoPreview.disabled = disabled;
   elements.generateFrames.disabled = disabled;
   elements.togglePreview.disabled = disabled;
