@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="./styles.css" />
 </head>
 
-<body data-theme="night" class="min-h-screen bg-base-200 text-base-content">
+<body data-theme="dracula" class="min-h-screen bg-base-200 text-base-content">
   <main class="landing-shell mx-auto flex w-full max-w-[1180px] flex-col gap-6 p-4 lg:p-8">
 
 
@@ -163,6 +163,24 @@
       <a href="./editor.html" class="btn btn-primary">Launch Editor</a>
     </section>
   </main>
+
+  <!-- Fixed theme selector -->
+  <div
+    class="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full border border-base-300 bg-base-100/90 px-3 py-1.5 shadow-lg backdrop-blur text-sm opacity-70 hover:opacity-100 transition-opacity">
+    <span class="opacity-60 text-xs">Theme</span>
+    <select id="themeSelect" class="select select-xs select-ghost bg-transparent border-0 focus:outline-none pr-1">
+      <option value="night">Night</option>
+      <option value="dracula" selected>Dracula</option>
+      <option value="synthwave">Synthwave</option>
+      <option value="nord">Nord</option>
+      <option value="forest">Forest</option>
+      <option value="luxury">Luxury</option>
+      <option value="corporate">Corporate</option>
+      <option value="cupcake">Cupcake</option>
+      <option value="sunset">Sunset</option>
+      <option value="lofi">Lofi</option>
+    </select>
+  </div>
 
   <script>
     (function () {

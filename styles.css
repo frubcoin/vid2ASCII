@@ -38,6 +38,14 @@ main::before {
   gap: 0.7rem;
 }
 
+/* Remove the default btn-ghost hover/focus box on the logo link */
+a.brand-lockup.btn {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
 .brand-logo,
 .hero-logo {
   display: inline-block;
@@ -234,6 +242,54 @@ main::before {
 
 .landing-shell {
   overflow: hidden;
+}
+
+/* ── Marquee / ticker ── */
+.ticker-wrap {
+  overflow: hidden;
+  padding: 0.55rem 0;
+  white-space: nowrap;
+}
+
+.ticker-track {
+  display: inline-flex;
+  gap: 0;
+  /* Two identical sets of items sit side-by-side; animate exactly -50% to loop */
+  animation: ticker-scroll 18s linear infinite;
+  will-change: transform;
+}
+
+.ticker-track span {
+  display: inline-block;
+  padding: 0 2.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.ticker-track span::before {
+  content: '\2022';
+  /* bullet */
+  margin-right: 2.5rem;
+  opacity: 0.4;
+}
+
+@keyframes ticker-scroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track {
+    animation: none;
+  }
 }
 
 .landing-nav {
