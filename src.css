@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@source "*.html";
+@source "*.js";
 
 @plugin "daisyui" {
   themes: night, dracula, synthwave, nord, forest, luxury, corporate, cupcake, sunset, lofi;
