@@ -1587,6 +1587,8 @@ async function onGenerateFrames() {
     const frames = [];
     const colorFrames = [];
 
+    let loopStartTime = performance.now();
+
     for (let index = 0; index < frameCount; index += 1) {
       const time = Math.min(duration - 0.001, index / fps);
       await seekVideo(time);
@@ -1611,8 +1613,11 @@ async function onGenerateFrames() {
         );
       }
 
-      if (index % 8 === 0) {
+      // Yield based on time, not fixed frame count. Allows fast devices to rip through frames.
+      // 15ms target = ~60fps UI refresh rate budget 
+      if (performance.now() - loopStartTime > 15) {
         await nextFrame();
+        loopStartTime = performance.now();
       }
     }
 

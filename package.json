@@ -1,0 +1,19 @@
+{
+  "name": "vid2ascii",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "build:css": "npx @tailwindcss/cli -i src.css -o styles.css --minify",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@tailwindcss/browser": "^4.2.1",
+    "@tailwindcss/cli": "^4.2.1",
+    "daisyui": "^5.5.19",
+    "tailwindcss": "^4.2.1"
+  }
+}
